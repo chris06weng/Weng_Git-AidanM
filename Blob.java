@@ -18,7 +18,7 @@ public class Blob {
     public static void write(String input, String outputFile) throws FileNotFoundException {
 
         PrintWriter pw = new PrintWriter(
-                "/Users/aidanmichaelson/Documents/Honors Topics in Computer Science/Git-AidanM/objects/" + outputFile);
+                "objects" + outputFile);
         pw.print(input);
         pw.close();
     }

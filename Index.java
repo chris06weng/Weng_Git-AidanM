@@ -21,12 +21,12 @@ import java.util.*;
 public class Index {
 
     public static void init() throws FileNotFoundException {
-        File theDir = new File("/Users/aidanmichaelson/Documents/Honors Topics in Computer Science/Git-AidanM/objects");
+        File theDir = new File("objects");
         if (!theDir.exists()) {
             theDir.mkdirs();
         }
         PrintWriter pw = new PrintWriter(
-                "/Users/aidanmichaelson/Documents/Honors Topics in Computer Science/Git-AidanM/index");
+                "index");
         pw.close();
     }
 
@@ -36,14 +36,14 @@ public class Index {
         // add hash file to object
         // add txt name and hash to index.
         PrintWriter pw = new PrintWriter(
-                "/Users/aidanmichaelson/Documents/Honors Topics in Computer Science/Git-AidanM/index");
+                "index");
         pw.print(fileName + ": " + Blob.sha1(Blob.read(fileName)));
         pw.close();
     }
 
     public static void remove(String fileName) throws IOException, NoSuchAlgorithmException {
         File inputFile = new File(
-                "/Users/aidanmichaelson/Documents/Honors Topics in Computer Science/Git-AidanM/index");
+                "index");
         File tempFile = new File("myTempFile.txt");
 
         BufferedReader reader = new BufferedReader(new FileReader(inputFile));
@@ -65,7 +65,7 @@ public class Index {
 
         // remove file from directory
         Path path = FileSystems.getDefault()
-                .getPath("/Users/aidanmichaelson/Documents/Honors Topics in Computer Science/Git-AidanM/objects/"
+                .getPath("objects"
                         + Blob.sha1(Blob.read(fileName)));
         Files.delete(path);
 
