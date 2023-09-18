@@ -26,19 +26,21 @@ public class Index {
         if (!theDir.exists()) {
             theDir.mkdirs();
         }
-        PrintWriter pw = new PrintWriter(
-                "Index");
-        pw.close();
+
+        File file = new File("Index");
+        if (!file.exists()) {
+            file.mkdirs();
+        }
     }
 
     public static void add(String fileName) throws NoSuchAlgorithmException, IOException {
         Blob.blob(fileName);
+        File file = new File("Index");
 
         // add hash file to object
         // add txt name and hash to index.
-        PrintWriter pw = new PrintWriter(
-                "Index");
-        pw.print(fileName + ": " + Blob.sha1(Blob.read(fileName)));
+        PrintWriter pw = new PrintWriter(file);
+        pw.print(fileName + ": " + Blob.sha1(Blob.read(fileName)) + "\n");
         pw.close();
     }
 

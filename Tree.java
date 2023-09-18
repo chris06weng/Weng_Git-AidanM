@@ -13,23 +13,24 @@ import java.util.List;
 public class Tree {
     File tree;
 
-    public Tree(String fileName) {
+    public Tree(String fileName) throws IOException {
         tree = new File(fileName);
+        tree.createNewFile();
     }
 
     public void add(String input) throws NoSuchAlgorithmException, IOException {
         PrintWriter pw = new PrintWriter(tree);
         if (input.substring(0, 4).equals("tree")) {
-            pw.print("\n" + input);
+            pw.print("\n + tree : " + input);
         } else {
-            pw.print("\n + blob : " + Blob.sha1(Blob.read(input)) + " : input");
+            pw.print("\n + blob : " + Blob.sha1(Blob.read(input)) + " : " + input);
         }
         pw.close();
     }
 
     public void remove(String fileName) throws NoSuchAlgorithmException, IOException {
-        String entryToDelete1 = "blob: " + Blob.sha1(Blob.read(fileName)) + fileName;
-        String entryToDelete2 = "tree: " + fileName;
+        String entryToDelete1 = "blob : " + Blob.sha1(Blob.read(fileName)) + fileName;
+        String entryToDelete2 = "tree : " + fileName;
 
         try {
             List<String> indexContents = new ArrayList<>();

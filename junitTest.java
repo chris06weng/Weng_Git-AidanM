@@ -35,65 +35,62 @@ public class junitTest {
     @DisplayName("Test Index")
     void testCreateBlob() throws Exception {
         Index.init();
+        File testFile = new File("junittester.txt");
+        testFile.createNewFile();
+        PrintWriter pw = new PrintWriter(testFile);
+        pw.print("Junit tester");
+        pw.close();
+        assertTrue(testFile.exists());
+
         Index.add("junittester.txt");
 
         // Check blob exists in the objects folder
-        File file_junit1 = new File(
-                "/Users/chris/Documents/CS/Weng_Git-AidanM/objects/" + Blob.sha1("junittester.txt"));
+        File file_junit1 = new File("objects", Blob.sha1(Blob.read("junittester.txt")));
 
         assertTrue("Blob file to add not found", file_junit1.exists());
         // Read file contents
-        String indexFileContents = Blob.read("/Users/chris/Documents/CS/Weng_Git-AidanM/objects/" +
-                file_junit1);
-        assertEquals("File contents of Blob don't match file contents pre-blob creation", indexFileContents,
-                "this is the junit tester");
-    }
+        String fileContents = Blob.read("junittester.txt");
+        String hash = Blob.sha1(fileContents);
 
-    Tree testTree = new Tree("treetest.txt");
-    File testFile = new File("ref.txt");
+        String indexContents = Blob.read("Index");
+        assertEquals("junittester.txt: " + hash + "\n", indexContents);
 
-    @Test
-    void testAdd() throws NoSuchAlgorithmException, IOException {
-        // Add a tree entry
-        testTree.add("tree: testdir");
+        Index.remove("junittester.txt");
+        String fileContents2 = Blob.read("junittester.txt");
+        String hash2 = Blob.sha1(fileContents);
 
-        // Read the contents of the testFile and check if it contains the added entry
-        String fileContents = TestUtils.readFile(testFile);
-        assertTrue(fileContents.contains("tree: testdir"));
+        String indexContents2 = Blob.read("Index");
+        assertEquals("", indexContents2);
     }
 
     @Test
-    void testAddBlob() throws NoSuchAlgorithmException, IOException {
+    @DisplayName("Test Tree")
+    void testAddAndRemoveInTree() throws NoSuchAlgorithmException, IOException {
         // Add a blob entry
-        String content = "This is a test blob content.";
-        TestUtils.writeFile(testFile, content); // Write content to the testFile
-        testTree.add(testFile.getName());
+        String content = "Tree test content";
+        // Write content to the testFile
+        File tree = new File("treeTest.txt");
+        tree.createNewFile();
+        PrintWriter pw = new PrintWriter(tree);
+        pw.print(content);
+        pw.close();
+        Tree test = new Tree("test");
+        test.add("treeTest.txt");
+        assertTrue(tree.exists());
 
         // Read the contents of the testFile and check if it contains the added blob
         // entry
-        String fileContents = TestUtils.readFile(testFile);
-        assertTrue(fileContents.contains("blob : " + TestUtils.sha1(content) + " : " + testFile.getName()));
-    }
+        String fileContents = Blob.read("test");
+        assertTrue(fileContents.contains("blob : " + Blob.sha1(content) + " : " + "treeTest.txt"));
 
-    @Test
-    void testRemove() throws NoSuchAlgorithmException, IOException {
-        // Add a tree entry and a blob entry
-        testTree.add("tree: testdir");
-        String content = "This is a test blob content.";
-        TestUtils.writeFile(testFile, content);
-        testTree.add(testFile.getName());
-
-        // Remove the blob entry
-        testTree.remove(testFile.getName());
-
-        // Read the contents of the testFile and check if it does not contain the
-        // removed blob entry
-        String fileContents = TestUtils.readFile(testFile);
-        assertFalse(fileContents.contains("blob : " + TestUtils.sha1(content) + " : " + testFile.getName()));
+        test.remove("treeTest.txt");
+        String fileContents2 = Blob.read("test");
+        assertEquals(fileContents2, "");
     }
 
     @Test
     void testGenerateBlob() throws NoSuchAlgorithmException, IOException {
+        Tree testTree = new Tree("testTree");
         // Add a tree entry
         testTree.add("tree: testdir");
 
