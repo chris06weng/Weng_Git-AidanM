@@ -21,12 +21,14 @@ public class junitTest {
         pw.close();
         assertTrue(file.exists());
 
-        Blob.blob(file.getName());
+        Blob.blob("junit-test.txt");
 
-        File file1 = new File(Blob.sha1(Blob.read(file.getName())));
+        String content = Blob.read("junit-test.txt");
+        String hash = Blob.sha1(content);
+
+        File file1 = new File("objects", hash);
         assertTrue(file1.exists());
-        // assertEquals(Blob.read(Blob.sha1(Blob.read("junit-test.txt"))), "Junit
-        // tester");
+        assertEquals(Blob.read("junit-test.txt"), "Junit tester");
     }
 
     @Test
