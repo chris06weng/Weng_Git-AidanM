@@ -14,7 +14,7 @@ public class Tree {
     File tree;
 
     public Tree(String fileName) {
-        tree = new File("/Users/chris/Documents/CS/Weng_Git-AidanM/objects/", fileName);
+        tree = new File(fileName);
     }
 
     public void add(String input) throws NoSuchAlgorithmException, IOException {
