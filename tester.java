@@ -1,8 +1,7 @@
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-public class tester {
+public class Tester {
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
 
         Index.init();
@@ -19,5 +18,7 @@ public class tester {
         Index.add(file4);
         System.out.println(Blob.sha1(Blob.read(file3)));
         Index.remove(file3);
+
+        Blob.blob("junit-test.txt");
     }
 }
