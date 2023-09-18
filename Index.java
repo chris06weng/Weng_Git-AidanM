@@ -20,7 +20,7 @@ import java.security.NoSuchAlgorithmException;
 public class Index {
 
     public static void init() throws FileNotFoundException {
-        File theDir = new File("/Users/chris/Desktop/Honots/Weng_Git-AidanM/objects/");
+        File theDir = new File("/Users/chris/Documents/CS/Weng_Git-AidanM/objects/");
         if (!theDir.exists()) {
             theDir.mkdirs();
         }
@@ -64,7 +64,7 @@ public class Index {
 
         // remove file from directory
         Path path = FileSystems.getDefault()
-                .getPath("/Users/chris/Desktop/Honots/Weng_Git-AidanM/objects/"
+                .getPath("/Users/chris/Documents/CS/Weng_Git-AidanM/objects/"
                         + Blob.sha1(Blob.read(fileName)));
         Files.delete(path);
 
