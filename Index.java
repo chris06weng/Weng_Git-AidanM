@@ -16,12 +16,11 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
 
 public class Index {
 
     public static void init() throws FileNotFoundException {
-        File theDir = new File("objects");
+        File theDir = new File("/Users/chris/Desktop/Honots/Weng_Git-AidanM/objects/");
         if (!theDir.exists()) {
             theDir.mkdirs();
         }
@@ -61,11 +60,11 @@ public class Index {
         }
         writer.close();
         reader.close();
-        boolean successful = tempFile.renameTo(inputFile);
+        tempFile.renameTo(inputFile);
 
         // remove file from directory
         Path path = FileSystems.getDefault()
-                .getPath("objects"
+                .getPath("/Users/chris/Desktop/Honots/Weng_Git-AidanM/objects/"
                         + Blob.sha1(Blob.read(fileName)));
         Files.delete(path);
 
