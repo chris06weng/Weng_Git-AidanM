@@ -91,6 +91,8 @@ public class junitTest {
     @Test
     void testGenerateBlob() throws NoSuchAlgorithmException, IOException {
         Tree testTree = new Tree("testTree");
+        File testFile = new File("junittester.txt");
+
         // Add a tree entry
         testTree.add("tree: testdir");
 
