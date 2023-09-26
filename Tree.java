@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,43 @@ public class Tree {
         }
     }
 
+    public String getSha() throws IOException, NoSuchAlgorithmException {
+        List<String> contents = new ArrayList<>();
+
+        try (BufferedReader lineReader = new BufferedReader(new FileReader(tree))) {
+            String line;
+            while ((line = lineReader.readLine()) != null) {
+                contents.add(line);
+            }
+        }
+
+        contents.sort(String::compareTo);
+
+        StringBuilder contentString = new StringBuilder();
+        for (String line : contents) {
+            contentString.append(line);
+        }
+
+        return calculateSHA1(contentString.toString());
+    }
+
+    private String calculateSHA1(String input) throws NoSuchAlgorithmException {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            byte[] messageDigest = md.digest(input.getBytes());
+            StringBuilder sha1Hash = new StringBuilder();
+            for (byte b : messageDigest) {
+                sha1Hash.append(String.format("%02x", b));
+            }
+            return sha1Hash.toString();
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Error calculating SHA-1 hash: " + e.getMessage());
+            return null;
+        }
+    }
+
     public void generateBlob() throws NoSuchAlgorithmException, IOException {
         Blob.blob(tree.getName());
     }
+
 }
