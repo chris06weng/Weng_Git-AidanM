@@ -62,7 +62,7 @@ public class Commit {
 
     public void writeInNewCommit() throws IOException {
         File orginalFile = new File("objects/" + prevSha);
-        File newFile = new File("balls");
+        File newFile = new File("file");
         BufferedReader reader = new BufferedReader(new FileReader(orginalFile));
         BufferedWriter writer = new BufferedWriter(new FileWriter(newFile));
         String curr;

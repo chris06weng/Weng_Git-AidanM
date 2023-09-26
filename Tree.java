@@ -66,10 +66,8 @@ public class Tree {
             }
         }
 
-        // Sort the contents to ensure consistent SHA-1 calculation
         contents.sort(String::compareTo);
 
-        // Calculate SHA-1 hash based on the sorted contents
         StringBuilder contentString = new StringBuilder();
         for (String line : contents) {
             contentString.append(line);
@@ -89,7 +87,7 @@ public class Tree {
             return sha1Hash.toString();
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Error calculating SHA-1 hash: " + e.getMessage());
-            return null; // Handle the error appropriately in your application
+            return null;
         }
     }
 
