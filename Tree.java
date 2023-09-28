@@ -95,4 +95,41 @@ public class Tree {
         Blob.blob(tree.getName());
     }
 
+    public String addDirectory(String directoryPath) throws NoSuchAlgorithmException, IOException {
+        // Check if the directory exists and is readable
+        File directory = new File(directoryPath);
+        if (!directory.exists() || !directory.isDirectory() || !directory.canRead()) {
+            throw new IllegalArgumentException("Invalid or unreadable directory path: " + directoryPath);
+        }
+
+        // Create a new Tree for this directory
+        Tree childTree = new Tree(directory.getName());
+
+        // Traverse the directory
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    // For files, compute SHA-1 and add blob entry
+                    String sha1 = Blob.sha1(Blob.read(file.getPath()));
+                    childTree.add("blob : " + sha1 + " : " + file.getName());
+                } else if (file.isDirectory()) {
+                    // For subdirectories, recursively add them to the child tree
+                    String childTreeSha1 = addDirectory(file.getPath());
+                    childTree.add("tree : " + childTreeSha1 + " : " + file.getName());
+                }
+            }
+        }
+
+        // Blob the child tree and add an entry for it
+        childTree.generateBlob();
+        String childTreeSha1 = childTree.getSha();
+        add("tree : " + childTreeSha1 + " : " + directory.getName());
+
+        // Save the current tree to a file
+        generateBlob();
+        String treeSha1 = getSha();
+
+        return treeSha1;
+    }
 }
