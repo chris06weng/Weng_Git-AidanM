@@ -12,8 +12,13 @@ import java.time.LocalDateTime;
 
 public class Commit {
 
-    private String sha, author, desc, treeSha, prevSha, nextSha;
-    private Tree tree;
+    String sha;
+    private String author;
+    private String desc;
+    private String treeSha;
+    private String prevSha;
+    String nextSha;
+    Tree tree;
 
     public Commit(String sha, String author, String desc) throws IOException, NoSuchAlgorithmException {
         prevSha = sha;
