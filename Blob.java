@@ -7,12 +7,13 @@
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class Blob {
     public static void blob(String fileName) throws IOException, NoSuchAlgorithmException {
         try {
-            String content = read(fileName);
-            String hash = sha1(content);
+            String content = readFile(fileName);
+            String hash = calculateSHA1(content);
 
             String folderPath = "objects";
             String newFileName = hash;
@@ -24,11 +25,9 @@ public class Blob {
 
             String filePath = folderPath + File.separator + newFileName;
 
-            File newFile = new File(filePath);
-
-            PrintWriter pw = new PrintWriter(newFile);
-            pw.print(content);
-            pw.close();
+            try (PrintWriter pw = new PrintWriter(filePath, StandardCharsets.UTF_8)) {
+                pw.print(content);
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
