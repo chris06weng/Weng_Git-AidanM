@@ -25,9 +25,11 @@ public class Blob {
 
             String filePath = folderPath + File.separator + newFileName;
 
-            try (PrintWriter pw = new PrintWriter(filePath, StandardCharsets.UTF_8)) {
-                pw.print(content);
-            }
+            File newFile = new File(filePath);
+
+            PrintWriter pw = new PrintWriter(newFile);
+            pw.print(content);
+            pw.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
