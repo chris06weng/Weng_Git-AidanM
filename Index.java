@@ -1,18 +1,4 @@
-//create a new directory called objects 
-//create a new file called index
-//be able to add blobs which as before puts them into objects
-//but also creates a new file with the name of the txt file and the hash
-//be able to remove the file associated with that txt and remove it from objects
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.FileSystems;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
@@ -21,61 +7,64 @@ import java.util.List;
 
 public class Index {
 
-    public static void init() throws FileNotFoundException {
-        File theDir = new File("objects");
-        if (!theDir.exists()) {
-            theDir.mkdirs();
+    public static void init() {
+        File objectsDir = new File("objects");
+        if (!objectsDir.exists()) {
+            objectsDir.mkdirs();
         }
 
-        File file = new File("Index");
-        if (!file.exists()) {
-            file.mkdirs();
+        File indexFile = new File("Index");
+        if (!indexFile.exists()) {
+            try {
+                indexFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public static void add(String fileName) throws NoSuchAlgorithmException, IOException {
-        Blob.blob(fileName);
-        File file = new File("Index");
+        String content = Blob.readFile(fileName);
+        String hash = Blob.sha1(content);
 
-        // add hash file to object
-        // add txt name and hash to index.
-        PrintWriter pw = new PrintWriter(file);
-        pw.print(fileName + ": " + Blob.sha1(Blob.readFile(fileName)) + "\n");
-        pw.close();
+        File objectFile = new File("objects", hash);
+        if (!objectFile.exists()) {
+            try (PrintWriter pw = new PrintWriter(objectFile)) {
+                pw.print(content);
+            }
+        }
+
+        try (PrintWriter indexWriter = new PrintWriter(new FileWriter("Index", true))) {
+            indexWriter.println(fileName + ": " + hash);
+        }
     }
 
     public static void remove(String fileName) throws IOException, NoSuchAlgorithmException {
-        String objectsFolderPath = "objects";
-
         String content = Blob.readFile(fileName);
         String hash = Blob.sha1(content);
-        String entryToDelete = "fileName: " + hash;
 
-        try {
-            List<String> indexContents = new ArrayList<>();
-            BufferedReader indexReader = new BufferedReader(new FileReader("Index"));
-            PrintWriter pw = new PrintWriter("Index");
-            String line;
-            while ((line = indexReader.readLine()) != null) {
-                if (!line.equals(entryToDelete)) {
-                    indexContents.add(line);
-                }
-            }
-            indexReader.close();
-            pw.close();
-
-            BufferedWriter indexWriter = new BufferedWriter(new FileWriter("Index"));
-            for (String contents : indexContents) {
-                indexWriter.write(content);
-                indexWriter.newLine();
-            }
-            indexWriter.close();
-
-            File fileToDelete = new File(hash);
-            fileToDelete.delete();
-        } catch (IOException e) {
-            System.err.println("An error occurred: " + e.getMessage());
+        File objectFile = new File("objects", hash);
+        if (objectFile.exists()) {
+            objectFile.delete();
         }
 
+        File indexFile = new File("Index");
+        if (indexFile.exists()) {
+            List<String> updatedEntries = new ArrayList<>();
+            try (BufferedReader br = new BufferedReader(new FileReader(indexFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (!line.startsWith(fileName + ": ")) {
+                        updatedEntries.add(line);
+                    }
+                }
+            }
+
+            try (PrintWriter pw = new PrintWriter(new FileWriter(indexFile))) {
+                for (String entry : updatedEntries) {
+                    pw.println(entry);
+                }
+            }
+        }
     }
 }
