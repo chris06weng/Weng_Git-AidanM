@@ -40,19 +40,25 @@ public class Blob {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName, StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                content.append(line).append(System.lineSeparator());
+                content.append(line);
             }
         }
         return content.toString();
     }
 
     public static String calculateSHA1(String input) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
-        byte[] result = messageDigest.digest(input.getBytes(StandardCharsets.UTF_8));
-        StringBuilder sb = new StringBuilder();
-        for (byte b : result) {
-            sb.append(String.format("%02x", b));
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
+            byte[] bytes = messageDigest.digest(input.getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder stringBuilder = new StringBuilder();
+            for (byte b : bytes) {
+                stringBuilder.append(String.format("%02x", b));
+            }
+
+            return stringBuilder.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new NoSuchAlgorithmException("SHA-1 algorithm is not available", e);
         }
-        return sb.toString();
     }
 }
