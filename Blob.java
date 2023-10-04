@@ -33,14 +33,15 @@ public class Blob {
         }
     }
 
-    public static String read(String fileName) throws IOException {
-        StringBuilder str = new StringBuilder("");
-        BufferedReader ar = new BufferedReader(new FileReader(fileName));
-        while (ar.ready()) {
-            str.append((char) ar.read());
+    public static String readFile(String fileName) throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append(System.lineSeparator());
+            }
         }
-        ar.close();
-        return str.toString();
+        return content.toString();
     }
 
     public static String sha1(String input) throws NoSuchAlgorithmException {
