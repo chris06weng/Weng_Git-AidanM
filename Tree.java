@@ -1,18 +1,12 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Tree {
-    File tree;
+    private File tree;
 
     public Tree(String fileName) throws IOException {
         tree = new File(fileName);
@@ -20,29 +14,31 @@ public class Tree {
     }
 
     public void add(String input) throws NoSuchAlgorithmException, IOException {
-        PrintWriter pw = new PrintWriter(tree);
-        if (input.substring(0, 4).equals("tree")) {
-            pw.print("\n + tree : " + input);
-        } else {
-            pw.print("\n + blob : " + Blob.sha1(Blob.readFile(input)) + " : " + input);
+        try (PrintWriter pw = new PrintWriter(new FileWriter(tree, true))) {
+            if (input.startsWith("tree")) {
+                pw.println("+ " + input);
+            } else if (input.startsWith("blob")) {
+                pw.println("+ " + input);
+            } else {
+                throw new IllegalArgumentException("Invalid input format: " + input);
+            }
         }
-        pw.close();
     }
 
     public void remove(String fileName) throws NoSuchAlgorithmException, IOException {
-        String entryToDelete1 = "blob : " + Blob.sha1(Blob.readFile(fileName)) + fileName;
-        String entryToDelete2 = "tree : " + fileName;
+        String entryToDelete1 = "+ blob : " + Blob.sha1(Blob.readFile(fileName)) + " : " + fileName;
+        String entryToDelete2 = "+ tree : " + fileName;
 
         try {
             List<String> indexContents = new ArrayList<>();
-            BufferedReader lineReader = new BufferedReader(new FileReader(tree));
-            String line;
-            while ((line = lineReader.readLine()) != null) {
-                if (!line.equals(entryToDelete1) && !line.equals(entryToDelete2)) {
-                    indexContents.add(line);
+            try (BufferedReader lineReader = new BufferedReader(new FileReader(tree))) {
+                String line;
+                while ((line = lineReader.readLine()) != null) {
+                    if (!line.equals(entryToDelete1) && !line.equals(entryToDelete2)) {
+                        indexContents.add(line);
+                    }
                 }
             }
-            lineReader.close();
 
             try (BufferedWriter indexWriter = new BufferedWriter(new FileWriter(tree))) {
                 for (String contents : indexContents) {
@@ -50,7 +46,6 @@ public class Tree {
                     indexWriter.newLine();
                 }
             }
-
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage());
         }
@@ -66,29 +61,25 @@ public class Tree {
             }
         }
 
-        contents.sort(String::compareTo);
+        Collections.sort(contents);
 
         StringBuilder contentString = new StringBuilder();
         for (String line : contents) {
             contentString.append(line);
         }
 
-        return calculateSHA1(contentString.toString());
+        return sha1(contentString.toString());
     }
 
-    private String calculateSHA1(String input) throws NoSuchAlgorithmException {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            byte[] messageDigest = md.digest(input.getBytes());
-            StringBuilder sha1Hash = new StringBuilder();
-            for (byte b : messageDigest) {
-                sha1Hash.append(String.format("%02x", b));
-            }
-            return sha1Hash.toString();
-        } catch (NoSuchAlgorithmException e) {
-            System.err.println("Error calculating SHA-1 hash: " + e.getMessage());
-            return null;
+    private String sha1(String input) throws NoSuchAlgorithmException {
+        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
+        byte[] result = mDigest.digest(input.getBytes());
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < result.length; i++) {
+            sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
         }
+
+        return sb.toString();
     }
 
     public void generateBlob() throws NoSuchAlgorithmException, IOException {
@@ -125,5 +116,4 @@ public class Tree {
 
         return treeSha1;
     }
-
 }

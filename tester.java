@@ -17,10 +17,10 @@ public class Tester {
         Index.add(file3);
         String file4 = "test4.txt";
         Index.add(file4);
-        System.out.println(Blob.sha1(Blob.read(file3)));
+        System.out.println(Blob.sha1(Blob.readFile(file3)));
         Index.remove(file3);
 
-        String content = Blob.read("test.txt");
+        String content = Blob.readFile("test.txt");
         String hash = Blob.sha1(content);
         System.out.println(hash);
         File testFile = new File("objects", hash);
