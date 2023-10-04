@@ -44,22 +44,13 @@ public class Blob {
         return content.toString();
     }
 
-    public static String sha1(String input) throws NoSuchAlgorithmException {
-        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
-        byte[] result = mDigest.digest(input.getBytes());
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < result.length; i++) {
-            sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+    public static String calculateSHA1(String input) throws NoSuchAlgorithmException {
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
+        byte[] result = messageDigest.digest(input.getBytes(StandardCharsets.UTF_8));
+        StringBuilder sb = new StringBuilder();
+        for (byte b : result) {
+            sb.append(String.format("%02x", b));
         }
-
         return sb.toString();
-    }
-
-    public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
-        // System.out.println("Hello " + sha1("Hello"));
-        blob("test.txt");
-
-        String file2 = "test2.txt";
-        blob(file2);
     }
 }
