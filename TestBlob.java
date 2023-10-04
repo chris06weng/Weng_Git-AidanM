@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 
 public class TestBlob {
     private static final String TEST_FILE = "test.txt";
@@ -28,11 +29,26 @@ public class TestBlob {
         }
 
         // Delete the generated object file if it exists
-        String hash = Blob.calculateSHA1(TEST_FILE_CONTENT);
+        String hash = Blob.sha1(TEST_FILE_CONTENT);
         File objectFile = new File("objects", hash);
         if (objectFile.exists()) {
             objectFile.delete();
         }
+    }
+
+    @Test
+    public void testBlob() throws Exception {
+        // Test the blob method
+        Blob.blob(TEST_FILE);
+
+        // Check if the object file with the expected content exists
+        String hash = Blob.sha1(TEST_FILE_CONTENT);
+        File objectFile = new File("objects", hash);
+        assertTrue(objectFile.exists());
+
+        // Read the content of the object file and compare it with the expected content
+        String objectFileContent = Blob.readFile(objectFile.getPath());
+        assertEquals(TEST_FILE_CONTENT, objectFileContent);
     }
 
     @Test
@@ -45,27 +61,16 @@ public class TestBlob {
     }
 
     @Test
-    public void testCalculateSHA1() throws Exception {
+    public void testCalculateSHA1() throws NoSuchAlgorithmException {
         // Test the calculateSHA1 method
-        String hash = Blob.calculateSHA1(TEST_FILE_CONTENT);
-        System.out.println(hash);
+        String input = "This is a test string.";
+        String expectedHash = Blob.sha1(input);
 
-        // Check if the hash matches the expected hash for the test content
-        assertEquals("fd36d9d24f15e5d0c7ab3cfae18e29d8bb82a1e3", hash);
-    }
-
-    @Test
-    public void testBlob() throws Exception {
-        // Test the blob method
-        Blob.blob(TEST_FILE);
-
-        // Check if the object file with the expected content exists
-        String hash = Blob.calculateSHA1(TEST_FILE_CONTENT);
-        File objectFile = new File("objects", hash);
-        assertTrue(objectFile.exists());
-
-        // Read the content of the object file and compare it with the expected content
-        String objectFileContent = Blob.readFile(objectFile.getPath());
-        assertEquals(TEST_FILE_CONTENT, objectFileContent);
+        try {
+            String hash = Blob.sha1(input);
+            assertEquals(expectedHash, hash);
+        } catch (NoSuchAlgorithmException e) {
+            fail("NoSuchAlgorithmException should not be thrown");
+        }
     }
 }

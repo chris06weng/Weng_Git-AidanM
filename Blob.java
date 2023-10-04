@@ -13,7 +13,7 @@ public class Blob {
     public static void blob(String fileName) throws IOException, NoSuchAlgorithmException {
         try {
             String content = readFile(fileName);
-            String hash = calculateSHA1(content);
+            String hash = sha1(content);
 
             String folderPath = "objects";
             String newFileName = hash;
@@ -46,19 +46,14 @@ public class Blob {
         return content.toString();
     }
 
-    public static String calculateSHA1(String input) throws NoSuchAlgorithmException {
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
-            byte[] bytes = messageDigest.digest(input.getBytes(StandardCharsets.UTF_8));
-
-            StringBuilder stringBuilder = new StringBuilder();
-            for (byte b : bytes) {
-                stringBuilder.append(String.format("%02x", b));
-            }
-
-            return stringBuilder.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new NoSuchAlgorithmException("SHA-1 algorithm is not available", e);
+    static String sha1(String input) throws NoSuchAlgorithmException {
+        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
+        byte[] result = mDigest.digest(input.getBytes());
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < result.length; i++) {
+            sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
         }
+
+        return sb.toString();
     }
 }

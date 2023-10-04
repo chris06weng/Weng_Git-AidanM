@@ -40,14 +40,14 @@ public class Index {
         // add hash file to object
         // add txt name and hash to index.
         PrintWriter pw = new PrintWriter(file);
-        pw.print(fileName + ": " + Blob.sha1(Blob.read(fileName)) + "\n");
+        pw.print(fileName + ": " + Blob.sha1(Blob.readFile(fileName)) + "\n");
         pw.close();
     }
 
     public static void remove(String fileName) throws IOException, NoSuchAlgorithmException {
         String objectsFolderPath = "objects";
 
-        String content = Blob.read(fileName);
+        String content = Blob.readFile(fileName);
         String hash = Blob.sha1(content);
         String entryToDelete = "fileName: " + hash;
 
@@ -77,15 +77,5 @@ public class Index {
             System.err.println("An error occurred: " + e.getMessage());
         }
 
-    }
-
-    public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
-        init();
-        String file3 = "test3.txt";
-        add(file3);
-        String file4 = "test4.txt";
-        add(file4);
-        System.out.println(Blob.sha1(Blob.read(file3)));
-        remove(file3);
     }
 }

@@ -22,11 +22,11 @@ public class TestIndex {
         Index.add("junittester.txt");
 
         // Check blob exists in the objects folder
-        File file_junit1 = new File("objects", Blob.sha1(Blob.read("junittester.txt")));
+        File file_junit1 = new File("objects", Blob.sha1(Blob.readFile("junittester.txt")));
 
         assertTrue(file_junit1.exists());
         // Read file contents
-        String fileContents = Blob.read("junittester.txt");
+        String fileContents = Blob.readFile("junittester.txt");
         String hash = Blob.sha1(fileContents);
 
         String indexContents = Blob.read("Index");
