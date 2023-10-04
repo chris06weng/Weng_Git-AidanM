@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class TestTree {
+public class TreeTest {
     @Test
     @DisplayName("Test Tree")
     void testAddAndRemoveInTree() throws NoSuchAlgorithmException, IOException {
@@ -28,11 +28,11 @@ public class TestTree {
 
         // Read the contents of the testFile and check if it contains the added blob
         // entry
-        String fileContents = Blob.read("test");
+        String fileContents = Blob.readFile("test");
         assertTrue(fileContents.contains("blob : " + Blob.sha1(content) + " : " + "treeTest.txt"));
 
         test.remove("treeTest.txt");
-        String fileContents2 = Blob.read("test");
+        String fileContents2 = Blob.readFile("test");
         assertEquals(fileContents2, "");
     }
 

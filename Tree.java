@@ -24,13 +24,13 @@ public class Tree {
         if (input.substring(0, 4).equals("tree")) {
             pw.print("\n + tree : " + input);
         } else {
-            pw.print("\n + blob : " + Blob.sha1(Blob.read(input)) + " : " + input);
+            pw.print("\n + blob : " + Blob.sha1(Blob.readFile(input)) + " : " + input);
         }
         pw.close();
     }
 
     public void remove(String fileName) throws NoSuchAlgorithmException, IOException {
-        String entryToDelete1 = "blob : " + Blob.sha1(Blob.read(fileName)) + fileName;
+        String entryToDelete1 = "blob : " + Blob.sha1(Blob.readFile(fileName)) + fileName;
         String entryToDelete2 = "tree : " + fileName;
 
         try {
@@ -107,7 +107,7 @@ public class Tree {
         if (files != null) {
             for (File file : files) {
                 if (file.isFile()) {
-                    String sha1 = Blob.sha1(Blob.read(file.getPath()));
+                    String sha1 = Blob.sha1(Blob.readFile(file.getPath()));
                     childTree.add("blob : " + sha1 + " : " + file.getName());
                 } else if (file.isDirectory()) {
                     String childTreeSha1 = addDirectory(file.getPath());

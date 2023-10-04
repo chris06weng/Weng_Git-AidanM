@@ -28,7 +28,7 @@ public class junitTest {
 
         File file1 = new File("objects", hash);
         assertTrue(file1.exists());
-        assertEquals(Blob.read("junit-test.txt"), "Junit tester");
+        assertEquals(Blob.readFile("junit-test.txt"), "Junit tester");
     }
 
     @Test
@@ -45,21 +45,21 @@ public class junitTest {
         Index.add("junittester.txt");
 
         // Check blob exists in the objects folder
-        File file_junit1 = new File("objects", Blob.sha1(Blob.read("junittester.txt")));
+        File file_junit1 = new File("objects", Blob.sha1(Blob.readFile("junittester.txt")));
 
         assertTrue("Blob file to add not found", file_junit1.exists());
         // Read file contents
-        String fileContents = Blob.read("junittester.txt");
+        String fileContents = Blob.readFile("junittester.txt");
         String hash = Blob.sha1(fileContents);
 
-        String indexContents = Blob.read("Index");
+        String indexContents = Blob.readFile("Index");
         assertEquals("junittester.txt: " + hash + "\n", indexContents);
 
         Index.remove("junittester.txt");
-        String fileContents2 = Blob.read("junittester.txt");
+        String fileContents2 = Blob.readFile("junittester.txt");
         String hash2 = Blob.sha1(fileContents);
 
-        String indexContents2 = Blob.read("Index");
+        String indexContents2 = Blob.readFile("Index");
         assertEquals("", indexContents2);
     }
 
@@ -80,11 +80,11 @@ public class junitTest {
 
         // Read the contents of the testFile and check if it contains the added blob
         // entry
-        String fileContents = Blob.read("test");
+        String fileContents = Blob.readFile("test");
         assertTrue(fileContents.contains("blob : " + Blob.sha1(content) + " : " + "treeTest.txt"));
 
         test.remove("treeTest.txt");
-        String fileContents2 = Blob.read("test");
+        String fileContents2 = Blob.readFile("test");
         assertEquals(fileContents2, "");
     }
 

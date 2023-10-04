@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 
-public class TestBlob {
+public class BlobTest {
     private static final String TEST_FILE = "test.txt";
     private static final String TEST_FILE_CONTENT = "This is a test file content.";
 

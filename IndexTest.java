@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class TestIndex {
+public class IndexTest {
     @Test
     @DisplayName("Test Index")
     void testCreateBlob() throws Exception {
@@ -29,14 +29,14 @@ public class TestIndex {
         String fileContents = Blob.readFile("junittester.txt");
         String hash = Blob.sha1(fileContents);
 
-        String indexContents = Blob.read("Index");
-        assertEquals("junittester.txt: " + hash + "\n", indexContents);
+        String indexContents = Blob.readFile("Index");
+        assertEquals("junittester.txt: " + hash, indexContents);
 
         Index.remove("junittester.txt");
-        String fileContents2 = Blob.read("junittester.txt");
+        String fileContents2 = Blob.readFile("junittester.txt");
         String hash2 = Blob.sha1(fileContents);
 
-        String indexContents2 = Blob.read("Index");
+        String indexContents2 = Blob.readFile("Index");
         assertEquals("", indexContents2);
     }
 }
