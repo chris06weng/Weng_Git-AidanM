@@ -1,13 +1,12 @@
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Index {
 
-    public static void init() {
+    public static void init() throws IOException {
         File objectsDir = new File("objects");
         if (!objectsDir.exists()) {
             objectsDir.mkdirs();
@@ -21,6 +20,8 @@ public class Index {
                 e.printStackTrace();
             }
         }
+        String empty = "";
+        Files.write(indexFile.toPath(), empty.getBytes());
     }
 
     public static void add(String fileName) throws NoSuchAlgorithmException, IOException {
@@ -35,7 +36,7 @@ public class Index {
         }
 
         try (PrintWriter indexWriter = new PrintWriter(new FileWriter("Index", true))) {
-            indexWriter.println(fileName + ": " + hash);
+            indexWriter.println(fileName + ": " + hash + "\n");
         }
     }
 
