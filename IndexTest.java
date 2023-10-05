@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class IndexTest {
     private static final String TEST_FILE = "test.txt";
     private static final String TEST_FILE_CONTENT = "This is a test file content.";
-    private static final String TEST_DIR = "test_directory";
+    private static final String TEST_DIR = "testing_directory";
     private static final String TEST_SUB_DIR = "sub_directory";
 
     @Before
