@@ -1,37 +1,27 @@
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class TestUtils {
+    public static Path createTestDirectory() throws IOException {
+        // Specify the directory path
+        Path directoryPath = Paths.get("test_directory");
 
-    // Create a temporary test directory for testing
-    public static void createTestDirectory(String directoryPath) {
-        try {
-            File directory = new File(directoryPath);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create test directory: " + directoryPath, e);
-        }
+        // Create the directory
+        Files.createDirectories(directoryPath);
+
+        return directoryPath;
     }
 
-    // Delete a temporary test directory after testing
-    public static void deleteTestDirectory(String directoryPath) {
-        try {
-            File directory = new File(directoryPath);
-            if (directory.exists()) {
-                deleteRecursive(directory);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to delete test directory: " + directoryPath, e);
+    public static void deleteTestDirectory(Path directoryPath) throws IOException {
+        // Delete the test directory and its contents recursively
+        if (Files.exists(directoryPath)) {
+            Files.walk(directoryPath)
+                    .map(Path::toFile)
+                    .sorted((o1, o2) -> -o1.compareTo(o2))
+                    .forEach(File::delete);
         }
-    }
-
-    private static void deleteRecursive(File fileOrDirectory) {
-        if (fileOrDirectory.isDirectory()) {
-            for (File child : fileOrDirectory.listFiles()) {
-                deleteRecursive(child);
-            }
-        }
-        fileOrDirectory.delete();
     }
 }

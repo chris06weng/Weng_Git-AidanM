@@ -1,31 +1,35 @@
+import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 public class IndexTest2 {
+    private static final String TEST_DIRECTORY = "test_directory";
+
+    @Before
+    public void setUp() {
+        // Create the test directory before each test case
+        TestUtils.createTestDirectory(TEST_DIRECTORY);
+    }
+
+    @After
+    public void tearDown() {
+        // Delete the test directory after each test case
+        TestUtils.deleteTestDirectory(TEST_DIRECTORY);
+    }
 
     @Test
     public void testAddDirectory() {
         try {
-            // Create an instance of the Index class
             Index index = new Index();
+            String directoryPath = TEST_DIRECTORY;
 
-            // Create a temporary directory for testing
-            String testDirPath = "test_directory";
-            TestUtils.createTestDirectory(testDirPath);
+            String sha1 = index.addDirectory(directoryPath);
 
-            // Add the directory to the index
-            String result = index.addDirectory(testDirPath);
-
-            // Assert that the result is not null
-            assertNotNull(result);
-
-            // Optionally, you can check other conditions based on your implementation
-            // For example, you can check if the added directory's contents are correctly indexed.
-
-            // Clean up: Delete the temporary test directory
-            TestUtils.deleteTestDirectory(testDirPath);
-        } catch (IOException | NoSuchAlgorithmException e) {
+            assertNotNull(sha1);
+            assertTrue(sha1.length() > 0);
+        } catch (Exception e) {
             fail("Exception occurred: " + e.getMessage());
         }
     }
+}
