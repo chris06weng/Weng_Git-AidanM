@@ -11,12 +11,25 @@ import java.util.Scanner;
 public class IndexTest {
     private static final String TEST_FILE = "test.txt";
     private static final String TEST_FILE_CONTENT = "This is a test file content.";
+    private static final String TEST_DIR = "test_directory";
+    private static final String TEST_SUB_DIR = "sub_directory";
 
     @Before
     public void setUp() throws Exception {
         // Create the test file with content
         try (PrintWriter writer = new PrintWriter(TEST_FILE, "UTF-8")) {
             writer.println(TEST_FILE_CONTENT);
+        }
+
+        File testDir = new File(TEST_DIR);
+        if (!testDir.exists()) {
+            testDir.mkdirs();
+        }
+
+        // Create a subdirectory
+        File subDir = new File(TEST_DIR + File.separator + TEST_SUB_DIR);
+        if (!subDir.exists()) {
+            subDir.mkdirs();
         }
     }
 
@@ -39,6 +52,11 @@ public class IndexTest {
         File objectFile = new File("objects", hash);
         if (objectFile.exists()) {
             objectFile.delete();
+        }
+
+        File testDir = new File(TEST_DIR);
+        if (testDir.exists()) {
+            deleteDirectory(testDir);
         }
     }
 
@@ -116,5 +134,42 @@ public class IndexTest {
             }
         }
         assertFalse(found);
+    }
+
+    @Test
+    public void testAddDirectory() throws Exception {
+        Index index = new Index();
+
+        // Add a directory to the index
+        String treeSHA1 = index.addDirectory(TEST_DIR);
+
+        // Check if the index file was updated
+        try (BufferedReader reader = new BufferedReader(new FileReader("Index"))) {
+            String line;
+            boolean found = false;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("tree : " + treeSHA1 + " : " + TEST_DIR)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            assertTrue(found);
+        }
+    }
+
+    private void deleteDirectory(File directory) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        directory.delete();
     }
 }
