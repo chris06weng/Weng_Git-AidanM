@@ -5,14 +5,16 @@ import org.junit.Test;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
 public class IndexTest {
     private static final String TEST_FILE = "test.txt";
     private static final String TEST_FILE_CONTENT = "This is a test file content.";
-    private static final String TEST_DIR = "testing_directory";
-    private static final String TEST_SUB_DIR = "sub_directory";
+    private Index index;
+    private String basePath;
 
     @Before
     public void setUp() throws Exception {
@@ -21,16 +23,8 @@ public class IndexTest {
             writer.println(TEST_FILE_CONTENT);
         }
 
-        File testDir = new File(TEST_DIR);
-        if (!testDir.exists()) {
-            testDir.mkdirs();
-        }
-
-        // Create a subdirectory
-        File subDir = new File(TEST_DIR + File.separator + TEST_SUB_DIR);
-        if (!subDir.exists()) {
-            subDir.mkdirs();
-        }
+        basePath = "base_directory";
+        index = new Index(basePath);
     }
 
     @After
@@ -52,11 +46,6 @@ public class IndexTest {
         File objectFile = new File("objects", hash);
         if (objectFile.exists()) {
             objectFile.delete();
-        }
-
-        File testDir = new File(TEST_DIR);
-        if (testDir.exists()) {
-            deleteDirectory(testDir);
         }
     }
 
@@ -137,39 +126,36 @@ public class IndexTest {
     }
 
     @Test
-    public void testAddDirectory() throws Exception {
-        Index index = new Index();
+    public void testAddDirectory() throws IOException {
+        // Directory name to be added.
+        String directoryName = "test_directory";
 
-        // Add a directory to the index
-        String treeSHA1 = index.addDirectory(TEST_DIR);
+        // Add a directory to the index.
+        index.addDirectory(directoryName);
 
-        // Check if the index file was updated
-        try (BufferedReader reader = new BufferedReader(new FileReader("Index"))) {
-            String line;
-            boolean found = false;
+        // Construct the expected directory path.
+        Path expectedDirectoryPath = Paths.get(basePath, directoryName);
 
-            while ((line = reader.readLine()) != null) {
-                if (line.contains("tree : " + treeSHA1 + " : " + TEST_DIR)) {
-                    found = true;
-                    break;
-                }
-            }
-
-            assertTrue(found);
-        }
+        // Check if the directory was created.
+        assertTrue(Files.isDirectory(expectedDirectoryPath));
     }
 
-    private void deleteDirectory(File directory) {
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    deleteDirectory(file);
-                } else {
-                    file.delete();
-                }
-            }
-        }
-        directory.delete();
+    @Test
+    public void testAddExistingDirectory() throws IOException {
+        // Directory name to be added.
+        String directoryName = "test_directory";
+
+        // Create the directory manually before adding it.
+        Path directoryPath = Paths.get(basePath, directoryName);
+        Files.createDirectories(directoryPath);
+
+        // Attempt to add the directory to the index.
+        index.addDirectory(directoryName);
+
+        // Construct the expected directory path.
+        Path expectedDirectoryPath = Paths.get(basePath, directoryName);
+
+        // Check if the directory still exists (should not be deleted).
+        assertTrue(Files.isDirectory(expectedDirectoryPath));
     }
 }
