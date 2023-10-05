@@ -3,7 +3,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import java.io.*;
-import java.security.NoSuchAlgorithmException;
 
 public class CommitTest {
     private static final String TEST_TREE_SHA1 = "8c411a89ed6d846f064ed0decdba3a857f0d1667";

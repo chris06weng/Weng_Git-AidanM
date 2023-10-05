@@ -68,4 +68,21 @@ public class Index {
             }
         }
     }
+
+    public String addDirectory(String directoryPath) throws NoSuchAlgorithmException, IOException {
+        File directory = new File(directoryPath);
+        if (!directory.exists() || !directory.isDirectory() || !directory.canRead()) {
+            throw new IllegalArgumentException("Invalid directory path: " + directoryPath);
+        }
+
+        Tree tree = new Tree(directory.getName());
+        String treeSHA1 = tree.addDirectory(directoryPath);
+
+        // Add the tree entry to the index
+        PrintWriter pw = new PrintWriter("Index");
+        pw.println("tree : " + treeSHA1 + " : " + directory.getName());
+        pw.close();
+
+        return treeSHA1;
+    }
 }
