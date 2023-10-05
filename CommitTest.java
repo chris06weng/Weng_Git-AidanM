@@ -1,89 +1,89 @@
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import java.io.*;
+import java.security.NoSuchAlgorithmException;
 
 public class CommitTest {
+    private static final String TEST_TREE_SHA1 = "8c411a89ed6d846f064ed0decdba3a857f0d1667";
+    private static final String TEST_PARENT_COMMIT_SHA1 = "f924e482dd33576fd0de90b6376f1671b08b5f52";
+    private static final String TEST_AUTHOR = "Mr. Theiss";
+    private static final String TEST_SUMMARY = "This commit is amazing";
 
-    @Test
-    public void testTreeSha() {
-        try {
-            Commit commit = new Commit("prevSha123", "John Doe", "Sample commit message");
-            commit.tree = new Tree("sampleTree.txt");
+    @Before
+    public void setUp() throws Exception {
+        // Create a test directory for the objects
+        File objectsDir = new File("objects");
+        if (!objectsDir.exists()) {
+            objectsDir.mkdirs();
+        }
+    }
 
-            String treeSha = commit.treeSha();
-            assertNotNull(treeSha);
-            assertFalse(treeSha.isEmpty());
-
-        } catch (Exception e) {
-            fail("Exception occurred: " + e.getMessage());
+    @After
+    public void tearDown() throws Exception {
+        // Delete the test directory for the objects
+        File objectsDir = new File("objects");
+        if (objectsDir.exists()) {
+            deleteDirectory(objectsDir);
         }
     }
 
     @Test
-    public void testPush() {
-        try {
-            Commit commit = new Commit("prevSha123", "John Doe", "Sample commit message");
-            commit.tree = new Tree("sampleTree.txt");
-            commit.sha = "testSha123";
-            commit.nextSha = "nextSha123";
+    public void testWriteToFile() throws Exception {
+        Commit commit = new Commit(TEST_TREE_SHA1, TEST_PARENT_COMMIT_SHA1, TEST_AUTHOR, TEST_SUMMARY);
+        String filePath = "objects/" + commit.generateSHA1();
 
-            commit.push();
+        commit.writeToFile(filePath);
 
-            File commitFile = new File("objects/testSha123");
-            assertTrue(commitFile.exists());
+        File commitFile = new File(filePath);
+        assertTrue(commitFile.exists() && commitFile.isFile());
 
-        } catch (Exception e) {
-            fail("Exception occurred: " + e.getMessage());
+        // Verify the content of the written file
+        try (BufferedReader reader = new BufferedReader(new FileReader(commitFile))) {
+            assertEquals(TEST_TREE_SHA1, reader.readLine());
+            assertEquals(TEST_PARENT_COMMIT_SHA1, reader.readLine());
+            assertEquals("", reader.readLine());
+            assertEquals(TEST_AUTHOR, reader.readLine());
+            assertNotNull(reader.readLine()); // Date format can vary
+            assertEquals(TEST_SUMMARY, reader.readLine());
         }
     }
 
     @Test
-    public void testGetSha() {
-        try {
-            Commit commit = new Commit("prevSha123", "John Doe", "Sample commit message");
-            commit.tree = new Tree("sampleTree.txt");
+    public void testGenerateSHA1() throws Exception {
+        Commit commit = new Commit(TEST_TREE_SHA1, TEST_PARENT_COMMIT_SHA1, TEST_AUTHOR, TEST_SUMMARY);
+        String expectedSHA1 = Blob.sha1(
+                TEST_TREE_SHA1 + "\n" + TEST_PARENT_COMMIT_SHA1 + "\n\n" + TEST_AUTHOR + "\n" + commit.generateDate()
+                        + "\n" + TEST_SUMMARY);
 
-            String sha = commit.getSha();
-            assertNotNull(sha);
-            assertFalse(sha.isEmpty());
-
-        } catch (Exception e) {
-            fail("Exception occurred: " + e.getMessage());
-        }
+        assertEquals(expectedSHA1, commit.generateSHA1());
     }
 
     @Test
-    public void testWriteInNewCommit() {
-        try {
-            File testDir = new File("testDir");
-            testDir.mkdir();
-
-            File treeFile = new File(testDir, "sampleTree.txt");
-            FileWriter treeWriter = new FileWriter(treeFile);
-            treeWriter.write("Sample tree content");
-            treeWriter.close();
-
-            Commit commit = new Commit("prevSha123", "John Doe", "Sample commit message");
-            commit.tree = new Tree(treeFile.getAbsolutePath());
-
-            commit.writeInNewCommit();
-
-            File newCommitFile = new File("objects/prevSha123");
-            assertTrue(newCommitFile.exists());
-
-            recursiveDelete(testDir);
-
-        } catch (Exception e) {
-            fail("Exception occurred: " + e.getMessage());
-        }
+    public void testGetDate() throws Exception {
+        Commit commit = new Commit(TEST_TREE_SHA1, TEST_PARENT_COMMIT_SHA1, TEST_AUTHOR, TEST_SUMMARY);
+        assertNotNull(commit.getDate());
     }
 
-    private void recursiveDelete(File file) {
-        if (file.isDirectory()) {
-            for (File subFile : file.listFiles()) {
-                recursiveDelete(subFile);
+    @Test
+    public void testCreateTree() throws Exception {
+        Commit commit = new Commit(TEST_TREE_SHA1, TEST_PARENT_COMMIT_SHA1, TEST_AUTHOR, TEST_SUMMARY);
+        String treeSHA1 = commit.createTree("test_tree");
+        assertNotNull(treeSHA1);
+    }
+
+    private void deleteDirectory(File directory) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
             }
         }
-        file.delete();
+        directory.delete();
     }
 }

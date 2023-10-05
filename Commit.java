@@ -46,7 +46,7 @@ public class Commit {
         return tree.getSha();
     }
 
-    private String generateDate() {
+    public String generateDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
         return dateFormat.format(new Date());
     }
