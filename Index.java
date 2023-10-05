@@ -1,10 +1,18 @@
 import java.io.*;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Index {
+    private String basePath;
+
+    public Index(String basePath) {
+        this.basePath = basePath;
+    }
 
     public static void init() throws IOException {
         File objectsDir = new File("objects");
@@ -69,20 +77,16 @@ public class Index {
         }
     }
 
-    public String addDirectory(String directoryPath) throws NoSuchAlgorithmException, IOException {
-        File directory = new File(directoryPath);
-        if (!directory.exists() || !directory.isDirectory() || !directory.canRead()) {
-            throw new IllegalArgumentException("Invalid directory path: " + directoryPath);
+    public void addDirectory(String directoryName) throws IOException {
+        // Create a Path for the directory.
+        Path directoryPath = Paths.get(basePath, directoryName);
+
+        // Use Files.createDirectories to create the directory and its parent
+        // directories if needed.
+        try {
+            Files.createDirectories(directoryPath);
+        } catch (FileAlreadyExistsException e) {
+            // Directory already exists; you can handle this case if needed.
         }
-
-        Tree tree = new Tree(directory.getName());
-        String treeSHA1 = tree.addDirectory(directoryPath);
-
-        // Add the tree entry to the index
-        PrintWriter pw = new PrintWriter("Index");
-        pw.println("tree : " + treeSHA1 + " : " + directory.getName());
-        pw.close();
-
-        return treeSHA1;
     }
 }
