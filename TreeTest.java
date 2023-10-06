@@ -4,11 +4,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 public class TreeTest {
     private static final String TEST_FILE = "test.txt";
     private static final String TEST_FILE_CONTENT = "This is a test file content.";
+    private Tree tree;
 
     @Before
     public void setUp() throws Exception {
@@ -16,6 +21,10 @@ public class TreeTest {
         try (PrintWriter writer = new PrintWriter(TEST_FILE, "UTF-8")) {
             writer.println(TEST_FILE_CONTENT);
         }
+
+        String testDirectoryPath = "test_directory";
+        deleteDirectory(testDirectoryPath); // Clean up if it already exists
+        tree = new Tree("root");
     }
 
     @After
@@ -88,5 +97,48 @@ public class TreeTest {
         // Get the SHA-1 hash of the tree and check if it's not null
         String treeSha1 = tree.getSha();
         assertNotNull(treeSha1);
+    }
+
+    @Test
+    public void testAddDirectory() throws NoSuchAlgorithmException, IOException {
+        // Create a test directory structure
+        createDirectoryStructure("test_directory", "dir1", "dir1/subdir", "dir2", "file1.txt");
+
+        // Add the test directory to the tree
+        String treeSha1 = tree.addDirectory("test_directory");
+
+        // Ensure the treeSha1 is not null or empty
+        assertNotNull(treeSha1);
+        assertFalse(treeSha1.isEmpty());
+
+        // You can add more assertions to verify the correctness of your method.
+        // For example, you can check if specific entries were added to the tree.
+        assertTrue(tree.contains("tree : " + treeSha1 + " : test_directory"));
+        assertTrue(tree.contains("tree : " + treeSha1 + " : dir1"));
+        assertTrue(tree.contains("tree : " + treeSha1 + " : dir2"));
+        assertTrue(tree.contains("blob : <sha1-of-file1> : file1.txt"));
+    }
+
+    // Helper method to create a directory structure for testing
+    private void createDirectoryStructure(String rootDir, String... paths) throws IOException {
+        for (String path : paths) {
+            Path dirPath = Paths.get(rootDir, path);
+            Files.createDirectories(dirPath);
+
+            // Create a dummy file within each directory
+            Path filePath = dirPath.resolve("dummy.txt");
+            Files.createFile(filePath);
+        }
+    }
+
+    // Helper method to delete a directory and its contents
+    private void deleteDirectory(String directoryPath) throws IOException {
+        Path path = Paths.get(directoryPath);
+        if (Files.exists(path)) {
+            Files.walk(path)
+                    .map(Path::toFile)
+                    .sorted((o1, o2) -> -o1.compareTo(o2))
+                    .forEach(File::delete);
+        }
     }
 }

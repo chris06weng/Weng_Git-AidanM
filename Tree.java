@@ -7,18 +7,22 @@ import java.util.List;
 
 public class Tree {
     private File tree;
+    String record;
 
     public Tree(String fileName) throws IOException {
         tree = new File(fileName);
         tree.createNewFile();
+        record = "";
     }
 
     public void add(String input) throws NoSuchAlgorithmException, IOException {
         try (PrintWriter pw = new PrintWriter(new FileWriter(tree, true))) {
             if (input.startsWith("tree")) {
                 pw.println("+ " + input);
+                record += input;
             } else if (input.startsWith("blob")) {
                 pw.println("+ " + input);
+                record += input;
             } else {
                 throw new IllegalArgumentException("Invalid input format: " + input);
             }
@@ -115,5 +119,9 @@ public class Tree {
         String treeSha1 = getSha();
 
         return treeSha1;
+    }
+
+    public boolean contains(String input) {
+        return record.contains(input);
     }
 }

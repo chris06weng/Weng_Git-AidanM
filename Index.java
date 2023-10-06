@@ -1,19 +1,10 @@
 import java.io.*;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Index {
-    private String basePath;
-
-    public Index(String basePath) {
-        this.basePath = basePath;
-    }
-
     public static void init() throws IOException {
         File objectsDir = new File("objects");
         if (!objectsDir.exists()) {
@@ -77,16 +68,8 @@ public class Index {
         }
     }
 
-    public void addDirectory(String directoryName) throws IOException {
-        // Create a Path for the directory.
-        Path directoryPath = Paths.get(basePath, directoryName);
-
-        // Use Files.createDirectories to create the directory and its parent
-        // directories if needed.
-        try {
-            Files.createDirectories(directoryPath);
-        } catch (FileAlreadyExistsException e) {
-            // Directory already exists; you can handle this case if needed.
-        }
+    public static void addDirectory(String directoryPath) throws IOException, NoSuchAlgorithmException {
+        Tree tree = new Tree(directoryPath);
+        tree.addDirectory(directoryPath);
     }
 }
