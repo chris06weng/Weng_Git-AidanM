@@ -9,14 +9,31 @@ public class Tree {
     private File tree;
     String record;
 
+    public Tree() throws IOException {
+        tree = new File("Tree");
+        if (!tree.exists())
+            tree.createNewFile();
+    }
+
     public Tree(String fileName) throws IOException {
         tree = new File(fileName);
         tree.createNewFile();
         record = "";
     }
 
-    public void add(String input) throws NoSuchAlgorithmException, IOException {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(tree, true))) {
+    public void add(String fileName) throws NoSuchAlgorithmException, IOException {
+
+        // make a file with filename
+        // file exist?
+        File inputFile = new File(fileName);
+
+        try (
+
+                PrintWriter pw = new PrintWriter(new FileWriter(tree, true))
+
+        )
+
+        {
             if (input.startsWith("tree")) {
                 pw.println("+ " + input);
                 record += input;
