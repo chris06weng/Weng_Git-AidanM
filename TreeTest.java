@@ -87,56 +87,55 @@ public class TreeTest {
 
     }
 
-    // @Test
-    // public void testAddRemoveAndGetSha() throws Exception {
-    // // Test the add, remove, and getSha methods
-    // Tree tree = new Tree("tree.txt");
+    @Test
+    public void testAddRemoveAndGetSha() throws Exception {
+        // Test the add, remove, and getSha methods
+        Tree tree = new Tree();
 
-    // // Add a blob and a tree entry
-    // tree.add("blob : " + Blob.sha1(Blob.readFile(TEST_FILE)) + " : " +
-    // TEST_FILE);
-    // tree.add("tree : subdir-hash : subdir");
+        // Add a blob and a tree entry
+        tree.add(TEST_FILE);
+        tree.add("tree : subdir-hash : subdir");
 
-    // // Check if the tree file contains the added entries
-    // File treeFile = new File("tree.txt");
-    // assertTrue(treeFile.exists() && treeFile.isFile());
+        // Check if the tree file contains the added entries
+        File treeFile = new File("Tree");
+        assertTrue(treeFile.exists() && treeFile.isFile());
 
-    // try (Scanner scanner = new Scanner(treeFile)) {
-    // boolean foundBlob = false;
-    // boolean foundTree = false;
-    // while (scanner.hasNextLine()) {
-    // String line = scanner.nextLine();
-    // if (line.contains("blob : ") && line.contains(TEST_FILE)) {
-    // foundBlob = true;
-    // } else if (line.contains("tree : subdir-hash : subdir")) {
-    // foundTree = true;
-    // }
-    // }
-    // assertTrue(foundBlob);
-    // assertTrue(foundTree);
-    // }
+        try (Scanner scanner = new Scanner(treeFile)) {
+            boolean foundBlob = false;
+            boolean foundTree = false;
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.contains("blob : ") && line.contains(TEST_FILE)) {
+                    foundBlob = true;
+                } else if (line.contains("tree : subdir-hash : subdir")) {
+                    foundTree = true;
+                }
+            }
+            assertTrue(foundBlob);
+            assertTrue(foundTree);
+        }
 
-    // // Remove the blob entry and check if it's removed
-    // tree.remove(TEST_FILE);
-    // try (Scanner scanner = new Scanner(treeFile)) {
-    // boolean foundBlob = false;
-    // boolean foundTree = false;
-    // while (scanner.hasNextLine()) {
-    // String line = scanner.nextLine();
-    // if (line.contains("blob : ") && line.contains(TEST_FILE)) {
-    // foundBlob = true;
-    // } else if (line.contains("tree : subdir-hash : subdir")) {
-    // foundTree = true;
-    // }
-    // }
-    // assertFalse(foundBlob);
-    // assertTrue(foundTree);
-    // }
+        // Remove the blob entry and check if it's removed
+        tree.remove(TEST_FILE);
+        try (Scanner scanner = new Scanner(treeFile)) {
+            boolean foundBlob = false;
+            boolean foundTree = false;
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.contains("blob : ") && line.contains(TEST_FILE)) {
+                    foundBlob = true;
+                } else if (line.contains("tree : subdir-hash : subdir")) {
+                    foundTree = true;
+                }
+            }
+            assertFalse(foundBlob);
+            assertTrue(foundTree);
+        }
 
-    // // Get the SHA-1 hash of the tree and check if it's not null
-    // String treeSha1 = tree.getSha();
-    // assertNotNull(treeSha1);
-    // }
+        // Get the SHA-1 hash of the tree and check if it's not null
+        String treeSha1 = tree.getSha();
+        assertNotNull(treeSha1);
+    }
 
     // @Test
     // public void testAddDirectory() throws NoSuchAlgorithmException, IOException {

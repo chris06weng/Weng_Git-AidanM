@@ -68,8 +68,9 @@ public class Index {
         }
     }
 
-    public static void addDirectory(String directoryPath) throws IOException, NoSuchAlgorithmException {
-        Tree tree = new Tree(directoryPath);
-        tree.addDirectory(directoryPath);
-    }
+    // public static void addDirectory(String directoryPath) throws IOException,
+    // NoSuchAlgorithmException {
+    // Tree tree = new Tree(directoryPath);
+    // tree.addDirectory(directoryPath);
+    // }
 }

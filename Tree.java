@@ -7,48 +7,38 @@ import java.util.List;
 
 public class Tree {
     private File tree;
-    String record;
 
     public Tree() throws IOException {
+        reset();
+
         tree = new File("Tree");
         if (!tree.exists())
             tree.createNewFile();
     }
 
     public Tree(String fileName) throws IOException {
+        reset();
         tree = new File(fileName);
         tree.createNewFile();
-        record = "";
     }
 
     public void add(String fileName) throws NoSuchAlgorithmException, IOException {
-
-        // make a file with filename
-        // file exist?
+        PrintWriter pw = new PrintWriter(new FileWriter(tree, true));
         File inputFile = new File(fileName);
-
-        try (
-
-                PrintWriter pw = new PrintWriter(new FileWriter(tree, true))
-
-        )
-
-        {
-            if (input.startsWith("tree")) {
-                pw.println("+ " + input);
-                record += input;
-            } else if (input.startsWith("blob")) {
-                pw.println("+ " + input);
-                record += input;
-            } else {
-                throw new IllegalArgumentException("Invalid input format: " + input);
-            }
+        if (inputFile.exists()) {
+            pw.println("blob : " + Blob.sha1(Blob.readFile(fileName)) + " : " + fileName);
+        } else if (fileName.startsWith("tree")) {
+            pw.println("tree : " + fileName);
+        } else {
+            pw.close();
+            throw new IllegalArgumentException("Invalid input format: " + fileName);
         }
+        pw.close();
     }
 
     public void remove(String fileName) throws NoSuchAlgorithmException, IOException {
-        String entryToDelete1 = "+ blob : " + Blob.sha1(Blob.readFile(fileName)) + " : " + fileName;
-        String entryToDelete2 = "+ tree : " + fileName;
+        String entryToDelete1 = "blob : " + Blob.sha1(Blob.readFile(fileName)) + " : " + fileName;
+        String entryToDelete2 = "tree : " + fileName;
 
         try {
             List<String> indexContents = new ArrayList<>();
@@ -138,7 +128,8 @@ public class Tree {
         return treeSha1;
     }
 
-    public boolean contains(String input) {
-        return record.contains(input);
+    private void reset() {
+        tree = new File("Tree");
+        tree.delete();
     }
 }

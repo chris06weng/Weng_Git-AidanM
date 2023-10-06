@@ -140,37 +140,38 @@ public class IndexTest {
         assertFalse(found);
     }
 
-    @Test
-    public void testAddDirectory() throws IOException, NoSuchAlgorithmException {
-        // Directory name to be added.
-        String directoryName = "test";
+    // @Test
+    // public void testAddDirectory() throws IOException, NoSuchAlgorithmException {
+    // // Directory name to be added.
+    // String directoryName = "test";
 
-        // Add a directory to the index.
-        Index.addDirectory(directoryPath);
+    // // Add a directory to the index.
+    // Index.addDirectory(directoryPath);
 
-        // Construct the expected directory path.
-        Path expectedDirectoryPath = Paths.get(directoryPath, directoryName);
+    // // Construct the expected directory path.
+    // Path expectedDirectoryPath = Paths.get(directoryPath, directoryName);
 
-        // Check if the directory was created.
-        assertTrue(Files.isDirectory(expectedDirectoryPath));
-    }
+    // // Check if the directory was created.
+    // assertTrue(Files.isDirectory(expectedDirectoryPath));
+    // }
 
-    @Test
-    public void testAddExistingDirectory() throws IOException, NoSuchAlgorithmException {
-        // Directory name to be added.
-        String directoryName = "test";
+    // @Test
+    // public void testAddExistingDirectory() throws IOException,
+    // NoSuchAlgorithmException {
+    // // Directory name to be added.
+    // String directoryName = "test";
 
-        // Create the directory manually before adding it.
-        Path directoryPath = Paths.get(directoryPath, directoryName);
-        Files.createDirectories(directoryPath);
+    // // Create the directory manually before adding it.
+    // Path directoryPath = Paths.get(directoryPath, directoryName);
+    // Files.createDirectories(directoryPath);
 
-        // Attempt to add the directory to the index.
-        Index.addDirectory(directoryName);
+    // // Attempt to add the directory to the index.
+    // Index.addDirectory(directoryName);
 
-        // Construct the expected directory path.
-        Path expectedDirectoryPath = Paths.get(directoryPath, directoryName);
+    // // Construct the expected directory path.
+    // Path expectedDirectoryPath = Paths.get(directoryPath, directoryName);
 
-        // Check if the directory still exists (should not be deleted).
-        assertTrue(Files.isDirectory(expectedDirectoryPath));
-    }
+    // // Check if the directory still exists (should not be deleted).
+    // assertTrue(Files.isDirectory(expectedDirectoryPath));
+    // }
 }
