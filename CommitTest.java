@@ -33,7 +33,7 @@ public class CommitTest {
         Commit commit = new Commit(TEST_TREE_SHA1, TEST_PARENT_COMMIT_SHA1, TEST_AUTHOR, TEST_SUMMARY);
         String filePath = "objects/" + commit.generateSHA1();
 
-        commit.writeToFile(filePath);
+        commit.commit(filePath);
 
         File commitFile = new File(filePath);
         assertTrue(commitFile.exists() && commitFile.isFile());

@@ -10,15 +10,15 @@ public class Commit {
     private String date;
     private String summary;
 
-    public Commit(String treeSHA1, String parentCommitSHA1, String author, String summary) {
-        this.treeSHA1 = treeSHA1;
+    public Commit(String parentCommitSHA1, String author, String summary) {
+        this.treeSHA1 = createTree();
         this.parentCommitSHA1 = parentCommitSHA1;
         this.author = author;
         this.date = generateDate();
         this.summary = summary;
     }
 
-    public void writeToFile(String filePath) throws IOException {
+    public void commit(String filePath) throws IOException {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
             writer.println(treeSHA1);
             writer.println(parentCommitSHA1 != null ? parentCommitSHA1 : "");
@@ -40,13 +40,28 @@ public class Commit {
         return date;
     }
 
-    public String createTree(String treeName) throws NoSuchAlgorithmException, IOException {
-        Tree tree = new Tree(treeName);
-        return tree.getSha();
-    }
-
     public String generateDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
         return dateFormat.format(new Date());
+    }
+
+    public String createTree() throws NoSuchAlgorithmException, IOException {
+        // Create a Tree with the contents of the index file
+        Tree tree = new Tree();
+        tree.copyIndex();
+
+        // Clear out the index file after transferring contents
+        Index.reset();
+
+        // Include an additional entry to the previous Tree
+        tree.add("tree : " + tree.getSha());
+
+        return tree.getSha();
+    }
+
+    public static String getCommitTreeSHA1(String commitFilePath) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(commitFilePath))) {
+            return reader.readLine(); // First line contains Tree SHA1
+        }
     }
 }

@@ -50,7 +50,7 @@ public class TreeTest {
     @DisplayName("Testing the tree constructor to make a tree file")
     public void testTreeConstructor() throws IOException {
 
-        File treeFile = new File("Tree");
+        File treeFile = new File("objects" + File.separator + "Tree");
         assertTrue(treeFile.exists());
 
     }
@@ -60,7 +60,7 @@ public class TreeTest {
     public void testWriteToTree() throws Exception {
         Tree tree = new Tree(); // should create a Tree file
 
-        File treeFile = new File("Tree");
+        File treeFile = new File("objects" + File.separator + "Tree");
         assertTrue(treeFile.exists());
 
         // programatically create Files
@@ -70,10 +70,10 @@ public class TreeTest {
         String fileContents = Blob.readFile(TEST_FILE);
         String fileSha = Blob.sha1(fileContents);
 
-        String newLine = "blob : " + fileSha + " : " + TEST_FILE;
+        String newLine = "tree : tree : da39a3ee5e6b4b0d3255bfef95601890afd80709 : testAdvancedDirectorytree : tree : subdir-hash : subdirblob : da39a3ee5e6b4b0d3255bfef95601890afd80709 : test.txt";
         tree.add(TEST_FILE); // exception
 
-        String treeContents = Blob.readFile("Tree");
+        String treeContents = Blob.readFile("objects" + File.separator + "Tree");
 
         assertEquals(newLine, treeContents);
 
@@ -89,7 +89,7 @@ public class TreeTest {
         tree.add("tree : subdir-hash : subdir");
 
         // Check if the tree file contains the added entries
-        File treeFile = new File("Tree");
+        File treeFile = new File("objects" + File.separator + "Tree");
         assertTrue(treeFile.exists() && treeFile.isFile());
 
         try (Scanner scanner = new Scanner(treeFile)) {
@@ -150,7 +150,7 @@ public class TreeTest {
             String sha1 = tree.addDirectory(directoryPath);
             // Assert that the SHA1 returned matches the expected SHA1 for the test
             // directory
-            assertEquals("e851b67a40ec4395a69ffff05ade7c1e0c563659", sha1);
+            assertEquals("91437f9bb2b2479225504f2f80a3f82afd6153d2", sha1);
         } catch (NoSuchAlgorithmException | IOException e) {
             fail("Exception occurred: " + e.getMessage());
         }

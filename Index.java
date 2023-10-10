@@ -79,7 +79,7 @@ public class Index {
         }
     }
 
-    public void reset() {
+    public static void reset() {
         File fileToDelete = new File("Index");
         fileToDelete.delete();
     }

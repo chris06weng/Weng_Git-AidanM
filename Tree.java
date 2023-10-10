@@ -11,7 +11,15 @@ public class Tree {
     public Tree() throws IOException {
         reset();
 
-        tree = new File("Tree");
+        String folderPath = "objects";
+        File folder = new File(folderPath);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        String filePath = folderPath + File.separator + "Tree";
+
+        tree = new File(filePath);
         if (!tree.exists())
             tree.createNewFile();
     }
@@ -159,6 +167,21 @@ public class Tree {
         try (PrintWriter writer = new PrintWriter(blobFile)) {
             writer.print(blobContent);
         }
+    }
+
+    public void copyIndex() throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader("Index"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+        }
+        String indexContents = content.toString();
+
+        PrintWriter writer = new PrintWriter(tree);
+        writer.print(indexContents);
+        writer.close();
     }
 
     private void reset() {
