@@ -93,39 +93,68 @@ public class Tree {
         return sb.toString();
     }
 
-    public void generateBlob() throws NoSuchAlgorithmException, IOException {
-        Blob.blob(tree.getName());
-    }
-
     public String addDirectory(String directoryPath) throws NoSuchAlgorithmException, IOException {
         File directory = new File(directoryPath);
         if (!directory.exists() || !directory.isDirectory() || !directory.canRead()) {
             throw new IllegalArgumentException("Invalid or unreadable directory path: " + directoryPath);
         }
 
-        Tree childTree = new Tree(directory.getName());
+        Tree childTree = new Tree();
 
+        // Iterate through files and subdirectories in the given directory
         File[] files = directory.listFiles();
         if (files != null) {
             for (File file : files) {
                 if (file.isFile()) {
+                    // Compute SHA1 for files and add as a blob entry
                     String sha1 = Blob.sha1(Blob.readFile(file.getPath()));
                     childTree.add("blob : " + sha1 + " : " + file.getName());
                 } else if (file.isDirectory()) {
-                    String childTreeSha1 = addDirectory(file.getPath());
+                    // Recursively add subdirectories using childTree
+                    String childTreeSha1 = childTree.addDirectory(file.getPath());
                     childTree.add("tree : " + childTreeSha1 + " : " + file.getName());
                 }
             }
         }
 
+        // Generate a blob for the childTree and add as a tree entry to the current Tree
         childTree.generateBlob();
         String childTreeSha1 = childTree.getSha();
         add("tree : " + childTreeSha1 + " : " + directory.getName());
 
+        // Generate a blob for the current Tree and return its SHA1
         generateBlob();
         String treeSha1 = getSha();
 
         return treeSha1;
+    }
+
+    public void generateBlob() throws IOException, NoSuchAlgorithmException {
+        List<String> contents = new ArrayList<>();
+
+        try (BufferedReader lineReader = new BufferedReader(new FileReader(tree))) {
+            String line;
+            while ((line = lineReader.readLine()) != null) {
+                contents.add(line);
+            }
+        }
+
+        Collections.sort(contents);
+
+        StringBuilder contentString = new StringBuilder();
+        for (String line : contents) {
+            contentString.append(line);
+            contentString.append('\n'); // Add newline character
+        }
+
+        String blobContent = contentString.toString();
+
+        // Calculate SHA1 hash of the content and save it as a file
+        String sha1 = sha1(blobContent);
+        File blobFile = new File("objects/" + sha1);
+        try (PrintWriter writer = new PrintWriter(blobFile)) {
+            writer.print(blobContent);
+        }
     }
 
     private void reset() {

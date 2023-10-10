@@ -5,27 +5,20 @@ import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 public class TreeTest {
     private static final String TEST_FILE = "test.txt";
-    private static final String TEST_FILE_CONTENT = "This is a test file content.";
     private Tree tree;
 
     @Before
     public void setUp() throws Exception {
-        // // Create the test file with content
-        // try (PrintWriter writer = new PrintWriter(TEST_FILE, "UTF-8")) {
-        // writer.println(TEST_FILE_CONTENT);
-        // }
-
-        // String testDirectoryPath = "test_directory";
-        // deleteDirectory(testDirectoryPath); // Clean up if it already exists
-        // tree = new Tree("root");
+        try {
+            tree = new Tree();
+        } catch (IOException e) {
+            fail("Tree not created.");
+        }
     }
 
     @After
@@ -137,48 +130,56 @@ public class TreeTest {
         assertNotNull(treeSha1);
     }
 
-    // @Test
-    // public void testAddDirectory() throws NoSuchAlgorithmException, IOException {
-    // // Create a test directory structure
-    // createDirectoryStructure("test_directory", "dir1", "dir1/subdir", "dir2",
-    // "file1.txt");
+    @Test
+    public void testAddDirectoryBasic() throws IOException {
+        Index.init();
+        String directoryPath = "testBasicDirectory";
 
-    // // Add the test directory to the tree
-    // String treeSha1 = tree.addDirectory("test_directory");
+        File directory = new File(directoryPath);
 
-    // // Ensure the treeSha1 is not null or empty
-    // assertNotNull(treeSha1);
-    // assertFalse(treeSha1.isEmpty());
+        if (!directory.exists()) {
+            if (directory.mkdirs()) {
+                System.out.println("Directory created successfully.");
+            } else {
+                System.err.println("Failed to create the directory.");
+            }
+        } else {
+            System.out.println("Directory already exists.");
+        }
 
-    // // You can add more assertions to verify the correctness of your method.
-    // // For example, you can check if specific entries were added to the tree.
-    // assertTrue(tree.contains("tree : " + treeSha1 + " : test_directory"));
-    // assertTrue(tree.contains("tree : " + treeSha1 + " : dir1"));
-    // assertTrue(tree.contains("tree : " + treeSha1 + " : dir2"));
-    // assertTrue(tree.contains("blob : <sha1-of-file1> : file1.txt"));
-    // }
+        try {
+            String sha1 = tree.addDirectory(directoryPath);
+            // Assert that the SHA1 returned matches the expected SHA1 for the test
+            // directory
+            assertEquals("e851b67a40ec4395a69ffff05ade7c1e0c563659", sha1);
+        } catch (NoSuchAlgorithmException | IOException e) {
+            fail("Exception occurred: " + e.getMessage());
+        }
+    }
 
-    // // Helper method to create a directory structure for testing
-    // private void createDirectoryStructure(String rootDir, String... paths) throws
-    // IOException {
-    // for (String path : paths) {
-    // Path dirPath = Paths.get(rootDir, path);
-    // Files.createDirectories(dirPath);
+    @Test
+    public void testAddDirectoryAdvanced() {
+        String directoryPath = "testAdvancedDirectory";
 
-    // // Create a dummy file within each directory
-    // Path filePath = dirPath.resolve("dummy.txt");
-    // Files.createFile(filePath);
-    // }
-    // }
+        File directory = new File(directoryPath);
 
-    // // Helper method to delete a directory and its contents
-    // private void deleteDirectory(String directoryPath) throws IOException {
-    // Path path = Paths.get(directoryPath);
-    // if (Files.exists(path)) {
-    // Files.walk(path)
-    // .map(Path::toFile)
-    // .sorted((o1, o2) -> -o1.compareTo(o2))
-    // .forEach(File::delete);
-    // }
-    // }
+        if (!directory.exists()) {
+            if (directory.mkdirs()) {
+                System.out.println("Directory created successfully.");
+            } else {
+                System.err.println("Failed to create the directory.");
+            }
+        } else {
+            System.out.println("Directory already exists.");
+        }
+
+        try {
+            String sha1 = tree.addDirectory(directoryPath);
+            // Assert that the SHA1 returned matches the expected SHA1 for the advanced test
+            // directory
+            assertEquals("5c905e2580d41ca890386a6e6b0759dcec1e7368", sha1);
+        } catch (NoSuchAlgorithmException | IOException e) {
+            fail("Exception occurred: " + e.getMessage());
+        }
+    }
 }
