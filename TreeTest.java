@@ -70,7 +70,7 @@ public class TreeTest {
         // String fileContents = Blob.readFile(TEST_FILE);
         // String fileSha = Blob.sha1(fileContents);
 
-        String newLine = "tree : tree : da39a3ee5e6b4b0d3255bfef95601890afd80709 : testAdvancedDirectorytree : tree : subdir-hash : subdirblob : da39a3ee5e6b4b0d3255bfef95601890afd80709 : test.txt";
+        String newLine = "tree : tree : da39a3ee5e6b4b0d3255bfef95601890afd80709 : testAdvancedDirectoryblob : da39a3ee5e6b4b0d3255bfef95601890afd80709 : test.txt";
         tree.add(TEST_FILE); // exception
 
         String treeContents = Blob.readFile("objects" + File.separator + "Tree");
