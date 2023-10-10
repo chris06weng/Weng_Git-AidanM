@@ -10,7 +10,7 @@ public class Commit {
     private String date;
     private String summary;
 
-    public Commit(String parentCommitSHA1, String author, String summary) {
+    public Commit(String parentCommitSHA1, String author, String summary) throws NoSuchAlgorithmException, IOException {
         this.treeSHA1 = createTree();
         this.parentCommitSHA1 = parentCommitSHA1;
         this.author = author;
@@ -59,9 +59,7 @@ public class Commit {
         return tree.getSha();
     }
 
-    public static String getCommitTreeSHA1(String commitFilePath) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(commitFilePath))) {
-            return reader.readLine(); // First line contains Tree SHA1
-        }
+    public String getCommitTreeSHA1() throws IOException {
+        return treeSHA1;
     }
 }
