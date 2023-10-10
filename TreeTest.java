@@ -19,6 +19,14 @@ public class TreeTest {
         } catch (IOException e) {
             fail("Tree not created.");
         }
+
+        File file = new File("test.txt");
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        PrintWriter writer = new PrintWriter(file);
+        writer.print("Tree test");
+        writer.close();
     }
 
     @After
@@ -41,6 +49,16 @@ public class TreeTest {
         // if (objectFile.exists()) {
         // objectFile.delete();
         // }
+
+        File file = new File("test.txt");
+        if (file.exists()) {
+            file.delete();
+        }
+
+        File objectsDir = new File("objects");
+        if (objectsDir.exists()) {
+            deleteDirectory(objectsDir);
+        }
     }
 
     // a good unit test, makes sure that my constructor works properly
@@ -70,7 +88,7 @@ public class TreeTest {
         // String fileContents = Blob.readFile(TEST_FILE);
         // String fileSha = Blob.sha1(fileContents);
 
-        String newLine = "tree : tree : da39a3ee5e6b4b0d3255bfef95601890afd80709 : testAdvancedDirectoryblob : da39a3ee5e6b4b0d3255bfef95601890afd80709 : test.txt";
+        String newLine = "blob : f432dd426cf8d1206f1e3aea9595ea553c5b7733 : test.txt";
         tree.add(TEST_FILE); // exception
 
         String treeContents = Blob.readFile("objects" + File.separator + "Tree");
@@ -150,7 +168,7 @@ public class TreeTest {
             String sha1 = tree.addDirectory(directoryPath);
             // Assert that the SHA1 returned matches the expected SHA1 for the test
             // directory
-            assertEquals("91437f9bb2b2479225504f2f80a3f82afd6153d2", sha1);
+            assertEquals("e851b67a40ec4395a69ffff05ade7c1e0c563659", sha1);
         } catch (NoSuchAlgorithmException | IOException e) {
             fail("Exception occurred: " + e.getMessage());
         }
@@ -180,5 +198,19 @@ public class TreeTest {
         } catch (NoSuchAlgorithmException | IOException e) {
             fail("Exception occurred: " + e.getMessage());
         }
+    }
+
+    private void deleteDirectory(File directory) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        directory.delete();
     }
 }

@@ -40,11 +40,11 @@ public class CommitTest {
         Index.add("test_commit.txt");
 
         Commit commit = new Commit(TEST_PARENT_COMMIT_SHA1, TEST_AUTHOR, TEST_SUMMARY);
-        String filePath = "objects/" + commit.generateSHA1();
+        String filePath = commit.generateSHA1();
 
         commit.commit(filePath);
 
-        File commitFile = new File(filePath);
+        File commitFile = new File("objects" + File.separator + filePath);
         assertTrue(commitFile.exists() && commitFile.isFile());
 
         // Verify the content of the written file

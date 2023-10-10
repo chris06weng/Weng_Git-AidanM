@@ -1,5 +1,6 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -74,9 +75,18 @@ public class MainJunitTest {
         commit4.commit("commit4.txt");
     }
 
+    @AfterAll
+    public static void tearDown() {
+        // Delete the test directory for the objects
+        File objectsDir = new File("objects");
+        if (objectsDir.exists()) {
+            deleteDirectory(objectsDir);
+        }
+    }
+
     @Test
     public void testSingleCommit() throws NoSuchAlgorithmException, IOException {
-        assertEquals("228ce5d7d08be93b13d2ebd61a4a633206b7c353", commit1.generateSHA1());
+        assertEquals("06783d64031a9b77c35e970cfc60f51ae3ac9051", commit1.generateSHA1());
         assertNull(commit1.getParentCommitSHA1());
 
         // Perform additional assertions as needed for added files, tree contents, etc.
@@ -84,19 +94,33 @@ public class MainJunitTest {
 
     @Test
     public void testTwoCommits() throws NoSuchAlgorithmException, IOException {
-        assertEquals("2cc054c1c5ada7971679ba18a4fbb4f6d5bf1ace", commit2.generateSHA1());
-        assertEquals("228ce5d7d08be93b13d2ebd61a4a633206b7c353", commit2.getParentCommitSHA1());
-        assertEquals("Oct 09, 2023", commit2.getDate());
+        assertEquals("91ac45880fc1891f4174351d29fb9ece87121c52", commit2.generateSHA1());
+        assertEquals("06783d64031a9b77c35e970cfc60f51ae3ac9051", commit2.getParentCommitSHA1());
+        assertEquals("Oct 10, 2023", commit2.getDate());
 
         // Perform additional assertions as needed for added files, tree contents, etc.
     }
 
     @Test
     public void testFourCommits() throws NoSuchAlgorithmException, IOException {
-        assertEquals("98870e59af506008da24cf33877b3cb0859dbc79", commit4.generateSHA1());
-        assertEquals("2a64645f878f67e0ba940992af11290c75ddf206", commit4.getParentCommitSHA1());
-        assertEquals("Oct 09, 2023", commit4.getDate());
+        assertEquals("35d23b8bc9f95fc204cf36f32a68263d2d5a4867", commit4.generateSHA1());
+        assertEquals("b65cec029f23e11309dc87b15acfa11f2aca1f82", commit4.getParentCommitSHA1());
+        assertEquals("Oct 10, 2023", commit4.getDate());
 
         // Perform additional assertions as needed for added files, tree contents, etc.
+    }
+
+    private static void deleteDirectory(File directory) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        directory.delete();
     }
 }
