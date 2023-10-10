@@ -19,7 +19,7 @@ public class Commit {
     }
 
     public void commit(String filePath) throws IOException {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("objects" + File.separator + filePath))) {
             writer.println(treeSHA1);
             writer.println(parentCommitSHA1 != null ? parentCommitSHA1 : "");
             writer.println(""); // Placeholder for the SHA1 of the next commit (blank initially)
@@ -61,5 +61,9 @@ public class Commit {
 
     public String getCommitTreeSHA1() throws IOException {
         return treeSHA1;
+    }
+
+    public String getParentCommitSHA1() {
+        return parentCommitSHA1;
     }
 }
