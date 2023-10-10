@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ public class Tree {
 
     public Tree() throws IOException {
         reset();
+        init();
 
         String folderPath = "objects";
         File folder = new File(folderPath);
@@ -17,15 +19,34 @@ public class Tree {
             folder.mkdirs();
         }
 
-        String filePath = folderPath + File.separator + "Tree";
+        String filePath = folderPath + File.separator + "Index";
 
         tree = new File(filePath);
         if (!tree.exists())
             tree.createNewFile();
     }
 
+    public static void init() throws IOException {
+        File objectsDir = new File("objects");
+        if (!objectsDir.exists()) {
+            objectsDir.mkdirs();
+        }
+
+        File indexFile = new File("Index");
+        if (!indexFile.exists()) {
+            try {
+                indexFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        String empty = "";
+        Files.write(indexFile.toPath(), empty.getBytes());
+    }
+
     public Tree(String fileName) throws IOException {
         reset();
+        init();
         tree = new File(fileName);
         tree.createNewFile();
     }
@@ -38,6 +59,7 @@ public class Tree {
         PrintWriter pw = new PrintWriter(new FileWriter(tree, true));
         File inputFile = new File(fileName);
         if (inputFile.exists()) {
+            Blob.blob(fileName);
             pw.println("blob : " + Blob.sha1(Blob.readFile(fileName)) + " : " + fileName);
         } else if (fileName.startsWith("tree")) {
             pw.println("tree : " + fileName);

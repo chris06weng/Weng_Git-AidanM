@@ -68,7 +68,7 @@ public class TreeTest {
     @DisplayName("Testing the tree constructor to make a tree file")
     public void testTreeConstructor() throws IOException {
 
-        File treeFile = new File("objects" + File.separator + "Tree");
+        File treeFile = new File("objects" + File.separator + "Index");
         assertTrue(treeFile.exists());
 
     }
@@ -78,7 +78,7 @@ public class TreeTest {
     public void testWriteToTree() throws Exception {
         Tree tree = new Tree(); // should create a Tree file
 
-        File treeFile = new File("objects" + File.separator + "Tree");
+        File treeFile = new File("objects" + File.separator + "Index");
         assertTrue(treeFile.exists());
 
         // programatically create Files
@@ -91,7 +91,7 @@ public class TreeTest {
         String newLine = "blob : f432dd426cf8d1206f1e3aea9595ea553c5b7733 : test.txt";
         tree.add(TEST_FILE); // exception
 
-        String treeContents = Blob.readFile("objects" + File.separator + "Tree");
+        String treeContents = Blob.readFile("objects" + File.separator + "Index");
 
         assertEquals(newLine, treeContents);
 
@@ -107,7 +107,7 @@ public class TreeTest {
         tree.add("tree : subdir-hash : subdir");
 
         // Check if the tree file contains the added entries
-        File treeFile = new File("objects" + File.separator + "Tree");
+        File treeFile = new File("objects" + File.separator + "Index");
         assertTrue(treeFile.exists() && treeFile.isFile());
 
         try (Scanner scanner = new Scanner(treeFile)) {
