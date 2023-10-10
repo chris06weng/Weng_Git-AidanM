@@ -78,4 +78,9 @@ public class Index {
             pw.println("tree : " + treeSha1 + " : " + directoryName);
         }
     }
+
+    public void reset() {
+        File fileToDelete = new File("Index");
+        fileToDelete.delete();
+    }
 }
