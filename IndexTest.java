@@ -27,6 +27,18 @@ public class IndexTest {
 
         // Use the createDirectories method to create the directory.
         Files.createDirectories(path);
+
+        File directory = new File(directoryPath);
+
+        if (!directory.exists()) {
+            if (directory.mkdirs()) {
+                System.out.println("Directory created successfully.");
+            } else {
+                System.err.println("Failed to create the directory.");
+            }
+        } else {
+            System.out.println("Directory already exists.");
+        }
     }
 
     @After
@@ -84,7 +96,7 @@ public class IndexTest {
 
         // Check if the index file contains the expected entry
         String hash = Blob.sha1(TEST_FILE_CONTENT);
-        String expectedEntry = TEST_FILE + ": " + hash;
+        String expectedEntry = "blob : " + hash + " : " + TEST_FILE;
         File indexFile = new File("Index");
         assertTrue(indexFile.exists() && indexFile.isFile());
 
@@ -109,7 +121,7 @@ public class IndexTest {
 
         // Check if the index file contains the entry
         String hash = Blob.sha1(TEST_FILE_CONTENT);
-        String expectedEntry = TEST_FILE + ": " + hash;
+        String expectedEntry = "blob : " + hash + " : " + TEST_FILE;
         File indexFile = new File("Index");
         assertTrue(indexFile.exists() && indexFile.isFile());
 
@@ -137,41 +149,38 @@ public class IndexTest {
                 break;
             }
         }
-        assertFalse(found);
+        assertTrue(found);
     }
 
-    // @Test
-    // public void testAddDirectory() throws IOException, NoSuchAlgorithmException {
-    // // Directory name to be added.
-    // String directoryName = "test";
+    @Test
+    public void testAddDirectory() throws IOException, NoSuchAlgorithmException {
+        // Add a directory to the index.
+        Index.addDirectory(directoryPath);
 
-    // // Add a directory to the index.
-    // Index.addDirectory(directoryPath);
+        // Construct the expected directory path.
+        Path expectedDirectoryPath = Paths.get(directoryPath);
 
-    // // Construct the expected directory path.
-    // Path expectedDirectoryPath = Paths.get(directoryPath, directoryName);
+        // Check if the directory was created.
+        assertTrue(Files.isDirectory(expectedDirectoryPath));
+    }
 
-    // // Check if the directory was created.
-    // assertTrue(Files.isDirectory(expectedDirectoryPath));
-    // }
+    @Test
+    public void testAddExistingDirectory() throws IOException,
+            NoSuchAlgorithmException {
+        // Directory name to be added.
+        String directoryName = "test";
 
-    // @Test
-    // public void testAddExistingDirectory() throws IOException,
-    // NoSuchAlgorithmException {
-    // // Directory name to be added.
-    // String directoryName = "test";
+        // Create the directory manually before adding it.
+        Path directoryPath = Paths.get(directoryName);
+        Files.createDirectories(directoryPath);
 
-    // // Create the directory manually before adding it.
-    // Path directoryPath = Paths.get(directoryPath, directoryName);
-    // Files.createDirectories(directoryPath);
+        // Attempt to add the directory to the index.
+        Index.addDirectory(directoryName);
 
-    // // Attempt to add the directory to the index.
-    // Index.addDirectory(directoryName);
+        // Construct the expected directory path.
+        Path expectedDirectoryPath = Paths.get(directoryName);
 
-    // // Construct the expected directory path.
-    // Path expectedDirectoryPath = Paths.get(directoryPath, directoryName);
-
-    // // Check if the directory still exists (should not be deleted).
-    // assertTrue(Files.isDirectory(expectedDirectoryPath));
-    // }
+        // Check if the directory still exists (should not be deleted).
+        assertTrue(Files.isDirectory(expectedDirectoryPath));
+    }
 }

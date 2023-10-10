@@ -49,7 +49,6 @@ public class TreeTest {
     @Test
     @DisplayName("Testing the tree constructor to make a tree file")
     public void testTreeConstructor() throws IOException {
-        Tree tree = new Tree(); // should create a Tree file
 
         File treeFile = new File("Tree");
         assertTrue(treeFile.exists());

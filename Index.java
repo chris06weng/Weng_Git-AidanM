@@ -35,7 +35,7 @@ public class Index {
         }
 
         try (PrintWriter indexWriter = new PrintWriter(new FileWriter("Index", true))) {
-            indexWriter.println(fileName + ": " + hash + "\n");
+            indexWriter.println("blob : " + hash + " : " + fileName + "\n");
         }
     }
 
@@ -68,9 +68,14 @@ public class Index {
         }
     }
 
-    // public static void addDirectory(String directoryPath) throws IOException,
-    // NoSuchAlgorithmException {
-    // Tree tree = new Tree(directoryPath);
-    // tree.addDirectory(directoryPath);
-    // }
+    public static void addDirectory(String directoryPath) throws IOException,
+            NoSuchAlgorithmException {
+        Tree tree = new Tree();
+        tree.addDirectory(directoryPath);
+        try (PrintWriter pw = new PrintWriter(new FileWriter("Index", true))) {
+            String treeSha1 = tree.getSha();
+            String directoryName = tree.getName();
+            pw.println("tree : " + treeSha1 + " : " + directoryName);
+        }
+    }
 }

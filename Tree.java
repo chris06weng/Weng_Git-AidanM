@@ -22,6 +22,10 @@ public class Tree {
         tree.createNewFile();
     }
 
+    public String getName() {
+        return tree.getName();
+    }
+
     public void add(String fileName) throws NoSuchAlgorithmException, IOException {
         PrintWriter pw = new PrintWriter(new FileWriter(tree, true));
         File inputFile = new File(fileName);
