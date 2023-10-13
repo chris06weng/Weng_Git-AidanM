@@ -10,7 +10,7 @@ public class Tree {
     private File tree;
 
     public Tree() throws IOException {
-        reset();
+        reset("Index");
         init();
 
         String folderPath = "objects";
@@ -45,8 +45,7 @@ public class Tree {
     }
 
     public Tree(String fileName) throws IOException {
-        reset();
-        init();
+        reset(fileName);
         tree = new File(fileName);
         tree.createNewFile();
     }
@@ -133,7 +132,7 @@ public class Tree {
             throw new IllegalArgumentException("Invalid or unreadable directory path: " + directoryPath);
         }
 
-        Tree childTree = new Tree();
+        Tree childTree = new Tree("subIndex");
 
         // Iterate through files and subdirectories in the given directory
         File[] files = directory.listFiles();
@@ -206,8 +205,13 @@ public class Tree {
         writer.close();
     }
 
-    private void reset() {
-        tree = new File("Tree");
+    private void reset(String fileName) {
+        tree = new File(fileName);
         tree.delete();
+    }
+
+    public void save() throws NoSuchAlgorithmException, IOException
+    {
+        Blob.blob("Index");
     }
 }
