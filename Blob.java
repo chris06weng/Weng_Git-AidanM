@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public class Blob {
     private static File file;
 
-    public static void blob(String fileName) throws IOException, NoSuchAlgorithmException {
+    public static String blob(String fileName) throws IOException, NoSuchAlgorithmException {
         try {
             String content = readFile(fileName);
             String hash = sha1(content.substring(0, content.length()));
@@ -43,8 +43,10 @@ public class Blob {
                 pw.println(contents.get(k));
             }
             pw.close();
+
+            return hash;
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            return "No file Found";
         }
     }
 
