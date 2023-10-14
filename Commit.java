@@ -46,15 +46,8 @@ public class Commit {
     }
 
     public String createTree() throws NoSuchAlgorithmException, IOException {
-        // Create a Tree with the contents of the index file
         Tree tree = new Tree();
-        tree.copyIndex();
-
-        // Clear out the index file after transferring contents
-        Index.reset();
-
-        // Include an additional entry to the previous Tree
-        tree.add("tree : " + tree.getSha());
+        tree.save();
 
         return tree.getSha();
     }

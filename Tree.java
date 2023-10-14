@@ -10,7 +10,6 @@ public class Tree {
     private File tree;
 
     public Tree() throws IOException {
-        reset("Index");
         init();
 
         String folderPath = "objects";
@@ -50,8 +49,8 @@ public class Tree {
         tree.createNewFile();
     }
 
-    public String getName() {
-        return tree.getName();
+    public String getName() throws NoSuchAlgorithmException, IOException {
+        return Blob.sha1(Blob.readFile("Index"));
     }
 
     public void add(String fileName) throws NoSuchAlgorithmException, IOException {
@@ -61,7 +60,7 @@ public class Tree {
             Blob.blob(fileName);
             pw.println("blob : " + Blob.sha1(Blob.readFile(fileName)) + " : " + fileName);
         } else if (fileName.startsWith("tree")) {
-            pw.println("tree : " + fileName);
+            pw.println(fileName);
         } else {
             pw.close();
             throw new IllegalArgumentException("Invalid input format: " + fileName);
@@ -205,13 +204,16 @@ public class Tree {
         writer.close();
     }
 
-    private void reset(String fileName) {
-        tree = new File(fileName);
-        tree.delete();
+    private void reset(String fileName) throws IOException {
+        File file = new File(fileName);
+        String empty = "";
+        if (file.exists())
+            Files.write(file.toPath(), empty.getBytes());
     }
 
     public void save() throws NoSuchAlgorithmException, IOException
     {
         Blob.blob("Index");
+        reset("Index");
     }
 }
