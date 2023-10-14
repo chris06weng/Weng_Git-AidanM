@@ -22,6 +22,11 @@ public class Commit {
         {
             commitFile.createNewFile();
         }
+        else
+        {
+            String empty = "";
+            Files.write(commitFile.toPath(), empty.getBytes());
+        }
 
         this.parentCommitSHA1 = parentCommitSHA1;
         if (!parentCommitSHA1.equals("")) {
@@ -33,12 +38,18 @@ public class Commit {
 
         String currentTree = this.getTreeContents();
         treeSHA1 = Blob.sha1(currentTree);
-        contents = treeSHA1 + "\n" + (parentCommitSHA1 != null ? parentCommitSHA1 : "") + "\n" + "\n" + this.author + "\n" + date + "\n" + this.summary;
 
-        commitName = Blob.sha1(contents);
+        PrintWriter pw = new PrintWriter ("Commit");
+        pw.println(treeSHA1);
+        pw.println(parentCommitSHA1 != null ? parentCommitSHA1 : "");
+        pw.println("");
+        pw.println(this.author);
+        pw.println(date);
+        pw.println(this.summary);
+        pw.close();
+
+        commitName = Blob.sha1(Blob.readFile("Commit"));
         updateHead();
-
-        Files.write(commitFile.toPath(), contents.getBytes());
 
         Blob.blob("Commit");
     }
@@ -53,8 +64,15 @@ public class Commit {
                 prev.add(line);
             }
         }
-        String newContents = prev.get(0) + prev.get(1) + commitName + prev.get(3) + prev.get(4) + prev.get(5);
-        Files.write(file.toPath(), newContents.getBytes());
+
+        PrintWriter pw = new PrintWriter ("Commit");
+        pw.println(prev.get(0));
+        pw.println(prev.get(1));
+        pw.println(commitName);
+        pw.println(prev.get(3));
+        pw.println(prev.get(4));
+        pw.println(prev.get(5));
+        pw.close();
     }
 
     private void updateHead() throws IOException
@@ -69,6 +87,7 @@ public class Commit {
     }
 
     public String generateSHA1() throws NoSuchAlgorithmException, IOException {
+        contents = Blob.readFile("Commit");
         return Blob.sha1(contents);
     }
 

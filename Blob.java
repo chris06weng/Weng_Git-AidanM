@@ -6,6 +6,8 @@
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -33,8 +35,13 @@ public class Blob {
                 newFile.createNewFile();
             }
 
+            List<String> contents = readFileToList(fileName);
+
             PrintWriter pw = new PrintWriter(newFile);
-            pw.print(content);
+            for (int k = 0; k<contents.size(); k++)
+            {
+                pw.println(contents.get(k));
+            }
             pw.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -46,10 +53,23 @@ public class Blob {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName, StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                content.append(line);
+                content.append(line + "\n");
             }
         }
+        
         return content.toString();
+    }
+
+    private static List<String> readFileToList(String fileName) throws IOException
+    {
+        List<String> contents = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                contents.add(line);
+            }
+        }
+        return contents;
     }
 
     static String sha1(String input) throws NoSuchAlgorithmException {
