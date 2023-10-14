@@ -71,13 +71,14 @@ public class Tree {
     public void remove(String fileName) throws NoSuchAlgorithmException, IOException {
         String entryToDelete1 = "blob : " + Blob.sha1(Blob.readFile(fileName)) + " : " + fileName;
         String entryToDelete2 = "tree : " + fileName;
+        String entryToDelete3 = fileName;
 
         try {
             List<String> indexContents = new ArrayList<>();
             try (BufferedReader lineReader = new BufferedReader(new FileReader(tree))) {
                 String line;
                 while ((line = lineReader.readLine()) != null) {
-                    if (!line.equals(entryToDelete1) && !line.startsWith(entryToDelete2)) {
+                    if (!line.equals(entryToDelete1) && !line.startsWith(entryToDelete2) && !line.contains(entryToDelete3)) {
                         indexContents.add(line);
                     }
                 }
@@ -189,7 +190,7 @@ public class Tree {
         }
     }
 
-    public void copyIndex() throws IOException {
+    public static String copyIndex() throws IOException {
         StringBuilder content = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader("Index"))) {
             String line;
@@ -199,21 +200,18 @@ public class Tree {
         }
         String indexContents = content.toString();
 
-        PrintWriter writer = new PrintWriter(tree);
-        writer.print(indexContents);
-        writer.close();
+        return indexContents;
     }
 
-    private void reset(String fileName) throws IOException {
+    private static void reset(String fileName) throws IOException {
         File file = new File(fileName);
         String empty = "";
         if (file.exists())
             Files.write(file.toPath(), empty.getBytes());
     }
 
-    public void save() throws NoSuchAlgorithmException, IOException
+    public static void save() throws NoSuchAlgorithmException, IOException
     {
         Blob.blob("Index");
-        reset("Index");
     }
 }

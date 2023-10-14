@@ -10,6 +10,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class Blob {
+    private static File file;
+
     public static void blob(String fileName) throws IOException, NoSuchAlgorithmException {
         try {
             String content = readFile(fileName);
@@ -26,6 +28,10 @@ public class Blob {
             String filePath = folderPath + File.separator + newFileName;
 
             File newFile = new File(filePath);
+            if (!newFile.exists())
+            {
+                newFile.createNewFile();
+            }
 
             PrintWriter pw = new PrintWriter(newFile);
             pw.print(content);
@@ -55,5 +61,14 @@ public class Blob {
         }
 
         return sb.toString();
+    }
+
+    public static void grab (String fileName) throws IOException
+    {
+        file = new File (fileName);
+        if (!file.exists())
+        {
+            file.createNewFile();
+        }
     }
 }
