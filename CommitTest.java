@@ -19,7 +19,7 @@ public class CommitTest {
 
         // Verify the commit file contents
         String expectedContents = commit.getCommitTreeSHA1() + "\n\n\n" + author + "\n" + commit.generateDate() + "\n" + summary;
-        String commitContents = Blob.readFile("Commit");
+        String commitContents = TestUtils.readFile("Commit");
         assertEquals(expectedContents + "\n", commitContents);
 
         // Verify commit tree SHA1
@@ -41,13 +41,14 @@ public class CommitTest {
         String summary2 = "Second commit";
 
         Commit commit = new Commit("objects/" + parentCommit.getName(), author2, summary2);
+        System.out.println(parentCommit.getName());
 
         // Verify Commit Properties
         assertNotNull(commit);
 
         // Verify the commit file contents
         String expectedContents = commit.getCommitTreeSHA1() + "\n" + "objects/" + parentCommit.getName() + "\n\n" + author2 + "\n" + commit.generateDate() + "\n" + summary2 + "\n";
-        String commitContents = Blob.readFile("Commit");
+        String commitContents = TestUtils.readFile("Commit");
         assertEquals(expectedContents, commitContents);
 
         // Verify commit tree SHA1

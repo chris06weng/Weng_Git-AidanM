@@ -17,7 +17,7 @@ public class Blob {
     public static void blob(String fileName) throws IOException, NoSuchAlgorithmException {
         try {
             String content = readFile(fileName);
-            String hash = sha1(content);
+            String hash = sha1(content.substring(0, content.length()));
 
             String folderPath = "objects";
             String newFileName = hash;
@@ -53,14 +53,14 @@ public class Blob {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName, StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                content.append(line + "\n");
+                content.append(line);
             }
         }
         
-        return content.toString();
+        return content.substring(0, content.length());
     }
 
-    private static List<String> readFileToList(String fileName) throws IOException
+    static List<String> readFileToList(String fileName) throws IOException
     {
         List<String> contents = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName, StandardCharsets.UTF_8))) {

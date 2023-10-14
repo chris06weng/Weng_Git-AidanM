@@ -29,9 +29,6 @@ public class Commit {
         }
 
         this.parentCommitSHA1 = parentCommitSHA1;
-        if (!parentCommitSHA1.equals("")) {
-            updatePrevCommit();
-        }
         this.author = author;
         this.date = generateDate();
         this.summary = summary;
@@ -50,6 +47,9 @@ public class Commit {
 
         commitName = Blob.sha1(Blob.readFile("Commit"));
         updateHead();
+        if (!parentCommitSHA1.equals("")) {
+            updatePrevCommit();
+        }
 
         Blob.blob("Commit");
     }
@@ -65,7 +65,7 @@ public class Commit {
             }
         }
 
-        PrintWriter pw = new PrintWriter ("Commit");
+        PrintWriter pw = new PrintWriter (file);
         pw.println(prev.get(0));
         pw.println(prev.get(1));
         pw.println(commitName);

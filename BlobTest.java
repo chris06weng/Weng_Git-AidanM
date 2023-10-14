@@ -1,76 +1,104 @@
-import static org.junit.Assert.*;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 public class BlobTest {
-    private static final String TEST_FILE = "test.txt";
-    private static final String TEST_FILE_CONTENT = "This is a test file content.";
 
-    @Before
-    public void setUp() throws Exception {
-        // Create the test file with content
-        try (PrintWriter writer = new PrintWriter(TEST_FILE, StandardCharsets.UTF_8)) {
-            writer.println(TEST_FILE_CONTENT);
-        }
-    }
+    private final String testFileName = "testfile.txt";
+    private final String testContents = "This is a test file content.";
+    private final String objectsFolder = "objects";
 
-    @After
-    public void tearDown() throws Exception {
-        // Delete the test file if it exists
-        File testFile = new File(TEST_FILE);
+    @BeforeEach
+    public void setUp() {
+        // Delete the test file and objects folder if they exist
+        File testFile = new File(testFileName);
         if (testFile.exists()) {
             testFile.delete();
         }
 
-        // Delete the generated object file if it exists
-        String hash = Blob.sha1(TEST_FILE_CONTENT);
-        File objectFile = new File("objects", hash);
-        if (objectFile.exists()) {
-            objectFile.delete();
+        File objectsDir = new File(objectsFolder);
+        if (objectsDir.exists()) {
+            File[] files = objectsDir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    file.delete();
+                }
+            }
+            objectsDir.delete();
+        }
+        else{
+            objectsDir.mkdirs();
         }
     }
 
     @Test
-    public void testBlob() throws Exception {
-        // Test the blob method
-        Blob.blob(TEST_FILE);
+    public void testBlob() {
+        try {
+            TestUtils.writeFile(testFileName, testContents);
 
-        // Check if the object file with the expected content exists
-        String hash = Blob.sha1(TEST_FILE_CONTENT);
-        File objectFile = new File("objects", hash);
-        assertTrue(objectFile.exists());
+            // Call Blob.blob() to create a new file
+            Blob.blob(testFileName);
 
-        // Read the content of the object file and compare it with the expected content
-        String objectFileContent = Blob.readFile(objectFile.getPath());
-        assertEquals(TEST_FILE_CONTENT, objectFileContent);
+            // Check if the new file exists in the "objects" folder
+            String hashedContents = Blob.sha1(testContents);
+            File newFile = new File ("objects" + File.separator + hashedContents);
+            assertTrue(newFile.exists());
+
+            // Check the contents of the new file
+            String newFileContents = TestUtils.readFile(newFile.getAbsolutePath());
+            assertEquals(testContents+"\n", newFileContents);
+        } catch (Exception e) {
+            fail("Exception thrown: " + e.getMessage());
+        }
     }
 
     @Test
-    public void testReadFile() throws Exception {
-        // Test the readFile method
-        String fileContent = Blob.readFile(TEST_FILE);
-
-        // Check if the content matches the expected content
-        assertEquals(TEST_FILE_CONTENT, fileContent);
-    }
-
-    @Test
-    public void testCalculateSHA1() throws NoSuchAlgorithmException {
-        // Test the calculateSHA1 method
-        String input = "This is a test string.";
-        String expectedHash = Blob.sha1(input);
+    public void testReadFile() throws IOException {
+        TestUtils.writeFile(testFileName, testContents);
 
         try {
-            String hash = Blob.sha1(input);
-            assertEquals(expectedHash, hash);
-        } catch (NoSuchAlgorithmException e) {
-            fail("NoSuchAlgorithmException should not be thrown");
+            String contents = Blob.readFile(testFileName);
+            assertEquals(testContents, contents);
+        } catch (IOException e) {
+            fail("IOException thrown: " + e.getMessage());
         }
+    }
+
+    @Test
+    public void testReadFileToList() throws IOException {
+        TestUtils.writeFile(testFileName, "Line 1\nLine 2\nLine 3");
+
+        try {
+            var lines = Blob.readFileToList(testFileName);
+            assertEquals(3, lines.size());
+            assertEquals("Line 1", lines.get(0));
+            assertEquals("Line 2", lines.get(1));
+            assertEquals("Line 3", lines.get(2));
+        } catch (IOException e) {
+            fail("IOException thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSha1() {
+        String input = "This is a test input for SHA1.";
+
+        try {
+            String sha1 = Blob.sha1(input);
+            assertEquals("b69312e39141616ebd5210ad65d4db9c0256b0ef", sha1);
+        } catch (NoSuchAlgorithmException e) {
+            fail("NoSuchAlgorithmException thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testGrab() throws IOException {
+        Blob.grab(testFileName);
+        File grabbedFile = new File(testFileName);
+        assertTrue(grabbedFile.exists());
     }
 }

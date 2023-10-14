@@ -94,8 +94,8 @@ public class TreeTest {
         String treeContents = Blob.readFile("objects" + File.separator + "Index");
 
         assertEquals(newLine, treeContents);
+    }        
 
-    }
 
     @Test
     public void testAddRemoveAndGetSha() throws Exception {
