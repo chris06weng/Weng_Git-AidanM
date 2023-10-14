@@ -77,7 +77,7 @@ public class Tree {
             try (BufferedReader lineReader = new BufferedReader(new FileReader(tree))) {
                 String line;
                 while ((line = lineReader.readLine()) != null) {
-                    if (!line.equals(entryToDelete1) && !line.equals(entryToDelete2)) {
+                    if (!line.equals(entryToDelete1) && !line.startsWith(entryToDelete2)) {
                         indexContents.add(line);
                     }
                 }
