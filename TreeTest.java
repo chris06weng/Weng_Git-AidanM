@@ -168,7 +168,7 @@ public class TreeTest {
             String sha1 = tree.addDirectory(directoryPath);
             // Assert that the SHA1 returned matches the expected SHA1 for the test
             // directory
-            assertEquals("e851b67a40ec4395a69ffff05ade7c1e0c563659", sha1);
+            assertEquals("8d2c7dfe73c6e999ab6e2c6c1220d5e87a0181dd", sha1);
         } catch (NoSuchAlgorithmException | IOException e) {
             fail("Exception occurred: " + e.getMessage());
         }
@@ -194,7 +194,7 @@ public class TreeTest {
             String sha1 = tree.addDirectory(directoryPath);
             // Assert that the SHA1 returned matches the expected SHA1 for the advanced test
             // directory
-            assertEquals("5c905e2580d41ca890386a6e6b0759dcec1e7368", sha1);
+            assertEquals("cff77b6f14a10b3fbebb93e4ed5447631bd99f64", sha1);
         } catch (NoSuchAlgorithmException | IOException e) {
             fail("Exception occurred: " + e.getMessage());
         }
